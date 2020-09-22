@@ -22,4 +22,14 @@ public:
 
 private:
 	void MoveUpDown(float AxisValue);
+	void MoveRightLeft(float AxisValue);
+	void Turn(float AxisValue);
+	void LookUp(float AxisValue);
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
+	UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
+	USpringArmComponent* SpringArm;
 };
