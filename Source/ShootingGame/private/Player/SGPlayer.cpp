@@ -8,11 +8,12 @@ ASGPlayer::ASGPlayer()
 	// 또 액터의 기준 위치가 다르기 때문에 Z축으로 절반 높이만큼 내려줘야 한다.
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	//SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-
-	SpringArm->SetupAttachment(RootComponent);
-	Camera->SetupAttachment(SpringArm);
+	
+	//SpringArm->SetupAttachment(RootComponent);
+	Camera->SetupAttachment(GetMesh());
+	Camera->SetActive(false, false);
 }
 
 void ASGPlayer::BeginPlay()
