@@ -18,9 +18,14 @@ public:
 	ASGPlayerController();
 
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
+
+public:
+	class USGHitEffect* GetHitEffectWidget() const;
+
+	void TakeHit();
 
 private:
-	void AddWidget(class UUserWidget* Widget, TSubclassOf<class UUserWidget>& Class, int32 ZOrder);
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI", meta = (AllowprivateAccess = true))
@@ -30,8 +35,11 @@ private:
 	TSubclassOf<class UUserWidget> HitEffectWidgetClass;
 
 	UPROPERTY()
-	class UUserWidget* HUDWidget;
+	class ASGPlayerState* SGPlayerState;
 
 	UPROPERTY()
-	class UUserWidget* HitEffectWidget;
+	class USGHUD* HUDWidget;
+
+	UPROPERTY()
+	class USGHitEffect* HitEffectWidget;
 };

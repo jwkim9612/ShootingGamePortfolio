@@ -1,4 +1,6 @@
 #include "SGPlayer.h"
+#include "SGPlayerController.h"
+#include "SGPlayerState.h"
 
 ASGPlayer::ASGPlayer()
 {
@@ -20,6 +22,10 @@ void ASGPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SGPlayerController = Cast<ASGPlayerController>(GetController());
+	SGPlayerState = Cast<ASGPlayerState>(SGPlayerController->PlayerState);
+
+	SGPlayerState->InitPlayerData(this);
 }
 
 void ASGPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -31,6 +37,11 @@ void ASGPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis(TEXT("MoveRightLeft"), this, &ASGPlayer::MoveRightLeft);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ASGPlayer::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &ASGPlayer::LookUp);
+}
+
+int32 ASGPlayer::GetHealth() const
+{
+	return Health;
 }
 
 void ASGPlayer::MoveUpDown(float AxisValue)

@@ -20,6 +20,9 @@ protected:
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	int32 GetHealth() const;
+
 private:
 	void MoveUpDown(float AxisValue);
 	void MoveRightLeft(float AxisValue);
@@ -32,4 +35,14 @@ private:
 
 	//UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
 	//USpringArmComponent* SpringArm;
+
+	UPROPERTY()
+	class ASGPlayerController* SGPlayerController;
+
+	UPROPERTY()
+	class ASGPlayerState* SGPlayerState;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Stat")
+	int32 Health;
 };

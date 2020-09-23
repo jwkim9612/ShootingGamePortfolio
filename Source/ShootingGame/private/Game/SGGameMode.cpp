@@ -2,13 +2,16 @@
 
 
 #include "SGGameMode.h"
+#include "SGPlayer.h"
+#include "SGPlayerController.h"
+#include "SGPlayerState.h"
 
 ASGGameMode::ASGGameMode()
 {
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/BluePrint/Player/BP_SGPlayer"));
-	if (PlayerPawnBPClass.Succeeded())
+	static ConstructorHelpers::FClassFinder<APawn> SGPlayerPawnBPClass(TEXT("/Game/BluePrint/Player/BP_SGPlayer"));
+	if (SGPlayerPawnBPClass.Succeeded())
 	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
+		DefaultPawnClass = SGPlayerPawnBPClass.Class;
 	}
 	else
 	{
@@ -23,5 +26,15 @@ ASGGameMode::ASGGameMode()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PlayerContoller is null!"));
+	}
+
+	static ConstructorHelpers::FClassFinder<APlayerState> SGPlayerStateClass(TEXT("/Game/BluePrint/Player/BP_SGPlayerState.BP_SGPlayerState_C"));
+	if (SGPlayerStateClass.Succeeded())
+	{
+		PlayerStateClass = SGPlayerStateClass.Class;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerState is null!"));
 	}
 }

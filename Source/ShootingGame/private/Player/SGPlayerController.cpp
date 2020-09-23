@@ -3,10 +3,12 @@
 
 #include "SGPlayerController.h"
 #include "SGHUD.h"
+#include "SGHitEffect.h"
+#include "SGPlayerState.h"
 
 ASGPlayerController::ASGPlayerController()
 {
-	static ConstructorHelpers::FClassFinder<USGHUD> HUD_Class(TEXT("/Game/BluePrint/UI/BP_SGHUD.BP_SGHUD_C"));
+	static ConstructorHelpers::FClassFinder<USGHUD> HUD_Class(TEXT("/Game/BluePrint/UI/BP_HUD.BP_HUD_C"));
 	if (HUD_Class.Succeeded())
 	{
 		HUDWidgetClass = HUD_Class.Class;
@@ -16,7 +18,7 @@ ASGPlayerController::ASGPlayerController()
 		UE_LOG(LogTemp, Warning, TEXT("HUD Class is null!!"));
 	}
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> HitEffect_Class(TEXT("/Game/BluePrint/UI/BP_HitEffect.BP_HitEffect_C"));
+	static ConstructorHelpers::FClassFinder<USGHitEffect> HitEffect_Class(TEXT("/Game/BluePrint/UI/BP_HitEffect.BP_HitEffect_C"));
 	if (HitEffect_Class.Succeeded())
 	{
 		HitEffectWidgetClass = HitEffect_Class.Class;
@@ -30,16 +32,36 @@ ASGPlayerController::ASGPlayerController()
 
 void ASGPlayerController::BeginPlay()
 {
-	AddWidget(HUDWidget, HUDWidgetClass, 0);
-	AddWidget(HitEffectWidget, HitEffectWidgetClass, 1);
+	SGPlayerState = Cast<ASGPlayerState>(PlayerState);
+
+	HUDWidget = CreateWidget<USGHUD>(this, HUDWidgetClass);
+	HUDWidget->AddToViewport(0);
+
+	HitEffectWidget = CreateWidget<USGHitEffect>(this, HitEffectWidgetClass);
+	HitEffectWidget->AddToViewport(1);
 }
 
-// 위젯 인스턴스를 생성하고 뷰포트에 추가하는 함수
-void ASGPlayerController::AddWidget(class UUserWidget* Widget, TSubclassOf<class UUserWidget>& Class, int32 ZOrder)
+void ASGPlayerController::SetupInputComponent()
 {
-	Widget = CreateWidget<UUserWidget>(this, Class);
-	if (Widget != nullptr)
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction("Hit", EInputEvent::IE_Pressed, this, &ASGPlayerController::TakeHit);
+}
+
+USGHitEffect * ASGPlayerController::GetHitEffectWidget() const
+{
+	return HitEffectWidget;
+}
+
+void ASGPlayerController::TakeHit()
+{
+	if (HitEffectWidget != nullptr)
 	{
-		Widget->AddToViewport(ZOrder);
+		SGPlayerState->SetHPToDamage(20);
+		HitEffectWidget->PlayFadeAnimation();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HitEffectWidget is null!!"));
 	}
 }
