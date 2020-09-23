@@ -19,7 +19,7 @@ void USGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (Player != nullptr)
 	{
 		CurrentSpeed	= Player->GetVelocity().Size();
-		Direction		= CalculateDirection(Player->GetVelocity(), Player->GetViewRotation());
+		Direction		= CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
 		bIsInAir		= Player->GetMovementComponent()->IsFalling();
 	}
 }
