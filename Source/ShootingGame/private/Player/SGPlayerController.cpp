@@ -39,13 +39,8 @@ void ASGPlayerController::BeginPlay()
 
 	HitEffectWidget = CreateWidget<USGHitEffect>(this, HitEffectWidgetClass);
 	HitEffectWidget->AddToViewport(1);
-}
 
-void ASGPlayerController::SetupInputComponent()
-{
-	Super::SetupInputComponent();
-
-	InputComponent->BindAction("Hit", EInputEvent::IE_Pressed, this, &ASGPlayerController::TakeHit);
+	BindWidgetToPlayerState();
 }
 
 USGHitEffect * ASGPlayerController::GetHitEffectWidget() const
@@ -53,15 +48,10 @@ USGHitEffect * ASGPlayerController::GetHitEffectWidget() const
 	return HitEffectWidget;
 }
 
-void ASGPlayerController::TakeHit()
+void ASGPlayerController::BindWidgetToPlayerState()
 {
-	if (HitEffectWidget != nullptr)
+	SGPlayerState->OnHPChanged.AddLambda([this]() -> void
 	{
-		SGPlayerState->SetHPToDamage(20);
-		HitEffectWidget->PlayFadeAnimation();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HitEffectWidget is null!!"));
-	}
+		HUDWidget->SetHPProgressBar(SGPlayerState->GetHPRatio());
+	});
 }

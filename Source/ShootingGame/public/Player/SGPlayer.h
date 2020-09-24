@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "ShootingGame.h"
 #include "GameFramework/Character.h"
 #include "SGPlayer.generated.h"
 
@@ -16,6 +16,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -23,11 +24,16 @@ public:
 public:
 	int32 GetHealth() const;
 
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	void TakeHit();
+
 private:
 	void MoveUpDown(float AxisValue);
 	void MoveRightLeft(float AxisValue);
 	void Turn(float AxisValue);
 	void LookUp(float AxisValue);
+
+	void SetHealingTimer();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
@@ -43,6 +49,12 @@ private:
 	class ASGPlayerState* SGPlayerState;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Stat")
+	UPROPERTY(EditAnywhere, Category = "Stat")
 	int32 Health;
+
+	UPROPERTY(VisibleAnywhere, Category = "Stat")
+	bool bIsHealing;
+
+private:
+	FTimerHandle HealingTimerHandle;
 };

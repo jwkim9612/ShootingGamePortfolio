@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "ShootingGame.h"
 #include "Blueprint/UserWidget.h"
 #include "SGHitEffect.generated.h"
 

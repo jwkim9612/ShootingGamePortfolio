@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EngineMinimal.h"
+#include "ShootingGame.h"
 #include "GameFramework/GameModeBase.h"
 #include "SGGameMode.generated.h"
 

@@ -4,15 +4,9 @@
 #include "SGPlayerState.h"
 #include "SGPlayer.h"
 
-void ASGPlayerState::InitPlayerData(class ASGPlayer* Player)
+void ASGPlayerState::InitPlayerData(ASGPlayer* Player)
 {
-	if (Player == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player is null!!"));
-		return;
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("is not null!!"));
+	SGCHECK(Player);
 
 	int32 Health = Player->GetHealth();
 	MaxHP = Health;
@@ -21,7 +15,38 @@ void ASGPlayerState::InitPlayerData(class ASGPlayer* Player)
 
 void ASGPlayerState::SetHPToDamage(int32 Damage)
 {
-	CurrentHP = FMath::Clamp(CurrentHP - Damage, 0, MaxHP);
+	SetHP(FMath::Clamp(CurrentHP - Damage, 0, MaxHP));
 
-	UE_LOG(LogTemp, Warning, TEXT("Current HP : %d"), CurrentHP);
+	SGLOG(Warning, TEXT("Current HP : %d"), CurrentHP);
+}
+
+void ASGPlayerState::SetHP(int32 NewHP)
+{
+	CurrentHP = NewHP;
+	OnHPChanged.Broadcast();
+
+	if (CurrentHP <= 0)
+	{
+		OnHPIsZero.Broadcast();
+	}
+}
+
+float ASGPlayerState::GetHPRatio() const
+{
+	float HPRatio = static_cast<float>(CurrentHP) / static_cast<float>(MaxHP);
+	return HPRatio;
+}
+
+bool ASGPlayerState::IsMaxHP() const
+{
+	if (CurrentHP == MaxHP)
+	{
+		return true;
+	}
+	return false;
+}
+
+void ASGPlayerState::HealHP()
+{
+	SetHP(FMath::Clamp(CurrentHP + 1, 0, MaxHP));
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EngineMinimal.h"
+#include "ShootingGame.h"
 #include "Animation/AnimInstance.h"
 #include "SGPlayerAnimInstance.generated.h"
 

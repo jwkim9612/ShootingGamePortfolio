@@ -6,10 +6,7 @@ void USGPlayerAnimInstance::NativeBeginPlay()
 	Super::NativeBeginPlay();
 
 	Player = Cast<ASGPlayer>(TryGetPawnOwner());
-	if (Player == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player is null!"));
-	}
+	SGCHECK(Player);
 }
 
 void USGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -18,8 +15,8 @@ void USGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (Player != nullptr)
 	{
-		CurrentSpeed	= Player->GetVelocity().Size();
-		Direction		= CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
-		bIsInAir		= Player->GetMovementComponent()->IsFalling();
+		CurrentSpeed = Player->GetVelocity().Size();
+		Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
+		bIsInAir = Player->GetMovementComponent()->IsFalling();
 	}
 }

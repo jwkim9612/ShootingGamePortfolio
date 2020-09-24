@@ -2,9 +2,12 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "ShootingGame.h"
 #include "GameFramework/PlayerState.h"
 #include "SGPlayerState.generated.h"
+
+DECLARE_MULTICAST_DELEGATE(FOnHPChangedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelegate);
 
 /**
  * 
@@ -18,6 +21,14 @@ public:
 	void InitPlayerData(class ASGPlayer* Player);
 
 	void SetHPToDamage(int32 Damage);
+	void SetHP(int32 NewHP);
+
+	float GetHPRatio() const;
+	bool IsMaxHP() const;
+	void HealHP();
+
+	FOnHPChangedDelegate OnHPChanged;
+	FOnHPIsZeroDelegate OnHPIsZero;
 
 private:
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = "Stat")

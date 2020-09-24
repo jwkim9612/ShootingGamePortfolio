@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "ShootingGame.h"
 #include "GameFramework/PlayerController.h"
 #include "SGPlayerController.generated.h"
 
@@ -18,14 +18,12 @@ public:
 	ASGPlayerController();
 
 	virtual void BeginPlay() override;
-	virtual void SetupInputComponent() override;
 
 public:
 	class USGHitEffect* GetHitEffectWidget() const;
 
-	void TakeHit();
-
 private:
+	void BindWidgetToPlayerState();
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI", meta = (AllowprivateAccess = true))
