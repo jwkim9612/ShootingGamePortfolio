@@ -4,20 +4,20 @@
 
 #include "ShootingGame.h"
 #include "Blueprint/UserWidget.h"
-#include "SGHUD.generated.h"
+#include "SGHitEffectWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SHOOTINGGAME_API USGHUD : public UUserWidget
+class SHOOTINGGAME_API USGHitEffectWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
+		
 public:
-	void SetHPProgressBar(float HPRatio);
+	void PlayFadeAnimation();
 
 private:
-	UPROPERTY(meta = (BindWidget))
-	class UProgressBar* HPProgressBar;
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* Fade;
 };

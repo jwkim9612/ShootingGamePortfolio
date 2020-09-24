@@ -20,24 +20,25 @@ public:
 	virtual void BeginPlay() override;
 
 public:
-	class USGHitEffect* GetHitEffectWidget() const;
+	class USGHitEffectWidget* GetSGHitEffectWidget() const;
+	class USGHUDWidget* GetSGHUDWidget() const;
 
 private:
 	void BindWidgetToPlayerState();
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI", meta = (AllowprivateAccess = true))
-	TSubclassOf<class UUserWidget> HUDWidgetClass;
+	TSubclassOf<class UUserWidget> SGHUDWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI", meta = (AllowprivateAccess = true))
-	TSubclassOf<class UUserWidget> HitEffectWidgetClass;
+	TSubclassOf<class UUserWidget> SGHitEffectWidgetClass;
 
 	UPROPERTY()
 	class ASGPlayerState* SGPlayerState;
 
 	UPROPERTY()
-	class USGHUD* HUDWidget;
+	class USGHUDWidget* SGHUDWidget;
 
 	UPROPERTY()
-	class USGHitEffect* HitEffectWidget;
+	class USGHitEffectWidget* SGHitEffectWidget;
 };

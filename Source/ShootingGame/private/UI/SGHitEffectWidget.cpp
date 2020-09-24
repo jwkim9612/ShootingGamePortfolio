@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SGHitEffect.h"
+#include "SGHitEffectWidget.h"
 
-void USGHitEffect::PlayFadeAnimation()
+void USGHitEffectWidget::PlayFadeAnimation()
 {
 	SGCHECK(Fade);
 	

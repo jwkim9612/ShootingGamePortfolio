@@ -2,30 +2,31 @@
 
 
 #include "SGPlayerController.h"
-#include "SGHUD.h"
-#include "SGHitEffect.h"
+#include "SGHUDWidget.h"
+#include "SGHitEffectWidget.h"
 #include "SGPlayerState.h"
+#include "SGHPBar.h"
 
 ASGPlayerController::ASGPlayerController()
 {
-	static ConstructorHelpers::FClassFinder<USGHUD> HUD_Class(TEXT("/Game/BluePrint/UI/BP_HUD.BP_HUD_C"));
-	if (HUD_Class.Succeeded())
+	static ConstructorHelpers::FClassFinder<USGHUDWidget> SGHUDWidget_Class(TEXT("/Game/BluePrint/UI/BP_SGHUDWidget.BP_SGHUDWidget_C"));
+	if (SGHUDWidget_Class.Succeeded())
 	{
-		HUDWidgetClass = HUD_Class.Class;
+		SGHUDWidgetClass = SGHUDWidget_Class.Class;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HUD Class is null!!"));
+		UE_LOG(LogTemp, Warning, TEXT("HUDWidgetClass is null!!"));
 	}
 
-	static ConstructorHelpers::FClassFinder<USGHitEffect> HitEffect_Class(TEXT("/Game/BluePrint/UI/BP_HitEffect.BP_HitEffect_C"));
-	if (HitEffect_Class.Succeeded())
+	static ConstructorHelpers::FClassFinder<USGHitEffectWidget> SGHitEffectWidget_Class(TEXT("/Game/BluePrint/UI/BP_SGHitEffectWidget.BP_SGHitEffectWidget_C"));
+	if (SGHitEffectWidget_Class.Succeeded())
 	{
-		HitEffectWidgetClass = HitEffect_Class.Class;
+		SGHitEffectWidgetClass = SGHitEffectWidget_Class.Class;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HitEffect Class is null!!"));
+		UE_LOG(LogTemp, Warning, TEXT("HitEffectWidgetClass is null!!"));
 	}
 
 }
@@ -34,24 +35,29 @@ void ASGPlayerController::BeginPlay()
 {
 	SGPlayerState = Cast<ASGPlayerState>(PlayerState);
 
-	HUDWidget = CreateWidget<USGHUD>(this, HUDWidgetClass);
-	HUDWidget->AddToViewport(0);
+	SGHUDWidget = CreateWidget<USGHUDWidget>(this, SGHUDWidgetClass);
+	SGHUDWidget->AddToViewport(0);
 
-	HitEffectWidget = CreateWidget<USGHitEffect>(this, HitEffectWidgetClass);
-	HitEffectWidget->AddToViewport(1);
+	SGHitEffectWidget = CreateWidget<USGHitEffectWidget>(this, SGHitEffectWidgetClass);
+	SGHitEffectWidget->AddToViewport(1);
 
 	BindWidgetToPlayerState();
 }
 
-USGHitEffect * ASGPlayerController::GetHitEffectWidget() const
+USGHitEffectWidget * ASGPlayerController::GetSGHitEffectWidget() const
 {
-	return HitEffectWidget;
+	return SGHitEffectWidget;
+}
+
+USGHUDWidget * ASGPlayerController::GetSGHUDWidget() const
+{
+	return SGHUDWidget;
 }
 
 void ASGPlayerController::BindWidgetToPlayerState()
 {
 	SGPlayerState->OnHPChanged.AddLambda([this]() -> void
 	{
-		HUDWidget->SetHPProgressBar(SGPlayerState->GetHPRatio());
+		SGHUDWidget->GetSGHPBar()->SetHPProgressBar(SGPlayerState->GetHPRatio());
 	});
 }

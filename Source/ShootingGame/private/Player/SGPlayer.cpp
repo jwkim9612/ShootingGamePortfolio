@@ -2,7 +2,8 @@
 #include "SGPlayerController.h"
 #include "SGPlayerState.h"
 #include "PlayerService.h"
-#include "SGHitEffect.h"
+#include "SGHitEffectWidget.h"
+#include "SGHUDWidget.h"
 
 ASGPlayer::ASGPlayer()
 {
@@ -38,6 +39,7 @@ void ASGPlayer::Tick(float DeltaSeconds)
 	{
 		if (SGPlayerState->IsMaxHP())
 		{
+			SGPlayerController->GetSGHUDWidget()->PlayFadeOutHPBarAnimation();
 			bIsHealing = false;
 		}
 		else
@@ -69,7 +71,8 @@ float ASGPlayer::TakeDamage(float Damage, FDamageEvent const & DamageEvent, ACon
 	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
 	SGPlayerState->SetHPToDamage(FinalDamage);
-	SGPlayerController->GetHitEffectWidget()->PlayFadeAnimation();
+	SGPlayerController->GetSGHitEffectWidget()->PlayFadeAnimation();
+	SGPlayerController->GetSGHUDWidget()->PlayFadeInHPBarAnimation();
 
 	SetHealingTimer();
 
