@@ -1,4 +1,5 @@
 #include "SGProjectile.h"
+#include "ProjectileService.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 ASGProjectile::ASGProjectile()
@@ -8,11 +9,11 @@ ASGProjectile::ASGProjectile()
 	
 	SetRootComponent(MeshComponent);
 
-	MovementComponent->InitialSpeed = 3500.0f;
-	MovementComponent->MaxSpeed = 3500.0f;
+	MovementComponent->InitialSpeed = ProjectileService::DefaultInitialSpeed;
+	MovementComponent->MaxSpeed = ProjectileService::DefaultMaxSpeed;
 
 	// ม฿ทย
-	MovementComponent->ProjectileGravityScale = 0.05f;
+	MovementComponent->ProjectileGravityScale = ProjectileService::DefaultProjectileGravityScale;
 
 }
 
@@ -30,5 +31,5 @@ void ASGProjectile::FireInDirection(const FVector & ShootDirection)
 
 void ASGProjectile::SetProjectileRotation(FRotator & WeaponRotator)
 {
-	MeshComponent->SetRelativeRotation(FRotator(90.0f, WeaponRotator.Yaw, 0.0f));
+	MeshComponent->SetRelativeRotation(FRotator(ProjectileService::PitchValueForShape, WeaponRotator.Yaw, 0.0f));
 }

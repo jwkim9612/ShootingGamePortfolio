@@ -14,4 +14,5 @@ public:
 
 	static const float DefaultMaxWalkSpeed;
 	static const float CrouchMaxWalkSpeed;
+	static const float SprintMaxWalkSpeed;
 };

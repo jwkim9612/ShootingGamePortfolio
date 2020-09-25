@@ -26,6 +26,7 @@ public:
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	void TakeHit();
 	bool IsCrouching() const;
+	bool IsSprint() const;
 
 private:
 	void MoveUpDown(float AxisValue);
@@ -37,6 +38,8 @@ private:
 
 	void Fire();
 	void DoCrouch();
+	void Sprint();
+	void SprintOff();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
@@ -60,6 +63,7 @@ private:
 	bool bIsHealing;
 
 	bool bIsCrouching;
+	bool bIsSprint;
 
 private:
 	FTimerHandle HealingTimerHandle;

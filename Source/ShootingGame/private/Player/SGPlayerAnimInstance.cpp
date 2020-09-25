@@ -19,5 +19,6 @@ void USGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		Direction = CalculateDirection(Player->GetVelocity(), Player->GetActorRotation());
 		bIsInAir = Player->GetMovementComponent()->IsFalling();
 		bIsCrouching = Player->IsCrouching();
+		bIsSprint = Player->IsSprint();
 	}
 }

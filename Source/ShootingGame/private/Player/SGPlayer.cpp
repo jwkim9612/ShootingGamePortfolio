@@ -23,6 +23,7 @@ ASGPlayer::ASGPlayer()
 	Camera->SetActive(false, false);
 
 	bIsCrouching = false;
+	bIsSprint = false;
 }
 
 void ASGPlayer::BeginPlay()
@@ -76,6 +77,9 @@ void ASGPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Hit"), EInputEvent::IE_Pressed, this, &ASGPlayer::TakeHit);
 	PlayerInputComponent->BindAction(TEXT("PrimaryFire"), EInputEvent::IE_Pressed, this, &ASGPlayer::Fire);
 	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Pressed, this, &ASGPlayer::DoCrouch);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &ASGPlayer::Sprint);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Repeat, this, &ASGPlayer::Sprint);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Released, this, &ASGPlayer::SprintOff);
 	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ASGPlayer::MoveUpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveRightLeft"), this, &ASGPlayer::MoveRightLeft);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ASGPlayer::Turn);
@@ -124,6 +128,11 @@ bool ASGPlayer::IsCrouching() const
 	return bIsCrouching;
 }
 
+bool ASGPlayer::IsSprint() const
+{
+	return bIsSprint;
+}
+
 void ASGPlayer::MoveUpDown(float AxisValue)
 {
 	AddMovementInput(Camera->GetForwardVector(), AxisValue);
@@ -163,7 +172,7 @@ void ASGPlayer::Fire()
 
 void ASGPlayer::DoCrouch()
 {
-	if (GetMovementComponent()->IsFalling())
+	if (GetMovementComponent()->IsFalling() || bIsSprint)
 	{
 		return;
 	}
@@ -177,5 +186,31 @@ void ASGPlayer::DoCrouch()
 	{
 		bIsCrouching = true;
 		GetCharacterMovement()->MaxWalkSpeed = PlayerService::CrouchMaxWalkSpeed;
+	}
+}
+
+void ASGPlayer::Sprint()
+{
+	if (bIsSprint ||
+		GetVelocity().Size() < 0 ||
+		GetCharacterMovement()->IsFalling() || 
+		bIsCrouching)
+	{
+		return;
+	}
+
+	if (!bIsSprint)
+	{
+		bIsSprint = true;
+		GetCharacterMovement()->MaxWalkSpeed = PlayerService::SprintMaxWalkSpeed;
+	}
+}
+
+void ASGPlayer::SprintOff()
+{
+	if (bIsSprint)
+	{
+		bIsSprint = false;
+		GetCharacterMovement()->MaxWalkSpeed = PlayerService::DefaultMaxWalkSpeed;
 	}
 }
