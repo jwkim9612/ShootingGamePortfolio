@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "ShootingGame.h"
@@ -20,12 +18,14 @@ protected:
 
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void Jump() override;
 
 public:
 	int32 GetHealth() const;
 
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	void TakeHit();
+	bool IsCrouching() const;
 
 private:
 	void MoveUpDown(float AxisValue);
@@ -35,12 +35,12 @@ private:
 
 	void SetHealingTimer();
 
+	void Fire();
+	void DoCrouch();
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
 	UCameraComponent* Camera;
-
-	//UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
-	//USpringArmComponent* SpringArm;
 
 	UPROPERTY()
 	class ASGPlayerController* SGPlayerController;
@@ -49,11 +49,17 @@ private:
 	class ASGPlayerState* SGPlayerState;
 
 private:
+	UPROPERTY()
+	class ASGWeapon* Weapon;
+
+private:
 	UPROPERTY(EditAnywhere, Category = "Stat")
 	int32 Health;
 
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	bool bIsHealing;
+
+	bool bIsCrouching;
 
 private:
 	FTimerHandle HealingTimerHandle;

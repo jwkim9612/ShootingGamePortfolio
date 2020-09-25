@@ -1,6 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "PlayerService.h"
 
 const float PlayerService::HealingTimer = 5.0f;
+
+const float PlayerService::DefaultMaxWalkSpeed = 600.0f;
+const float PlayerService::CrouchMaxWalkSpeed = 300.0f;

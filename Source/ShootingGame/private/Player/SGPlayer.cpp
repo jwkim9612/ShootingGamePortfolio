@@ -4,6 +4,8 @@
 #include "PlayerService.h"
 #include "SGHitEffectWidget.h"
 #include "SGHUDWidget.h"
+#include "SGWeapon.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ASGPlayer::ASGPlayer()
 {
@@ -19,6 +21,8 @@ ASGPlayer::ASGPlayer()
 	//SpringArm->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(GetMesh());
 	Camera->SetActive(false, false);
+
+	bIsCrouching = false;
 }
 
 void ASGPlayer::BeginPlay()
@@ -29,6 +33,21 @@ void ASGPlayer::BeginPlay()
 	SGPlayerState = Cast<ASGPlayerState>(SGPlayerController->PlayerState);
 
 	SGPlayerState->InitPlayerData(this);
+
+
+	// ¹«±â ÀåÂø //
+
+	auto MyClass = Cast<UClass>(FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).ResolveClass());
+	SGCHECK(MyClass);
+
+	if (MyClass != nullptr)
+	{
+		Weapon = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass, &FVector::ZeroVector, &FRotator::ZeroRotator));
+		SGCHECK(Weapon);
+		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
+	}
+
+	//////////////
 }
 
 void ASGPlayer::Tick(float DeltaSeconds)
@@ -55,11 +74,26 @@ void ASGPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ASGPlayer::Jump);
 	PlayerInputComponent->BindAction(TEXT("Hit"), EInputEvent::IE_Pressed, this, &ASGPlayer::TakeHit);
+	PlayerInputComponent->BindAction(TEXT("PrimaryFire"), EInputEvent::IE_Pressed, this, &ASGPlayer::Fire);
+	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Pressed, this, &ASGPlayer::DoCrouch);
 	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ASGPlayer::MoveUpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveRightLeft"), this, &ASGPlayer::MoveRightLeft);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ASGPlayer::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &ASGPlayer::LookUp);
 }
+
+void ASGPlayer::Jump()
+{
+	if (bIsCrouching)
+	{
+		DoCrouch();
+	}
+	else
+	{
+		Super::Jump();
+	}
+}
+
 
 int32 ASGPlayer::GetHealth() const
 {
@@ -83,6 +117,11 @@ void ASGPlayer::TakeHit()
 {
 	FDamageEvent DamageEvent;
 	TakeDamage(20, DamageEvent, GetController(), this);
+}
+
+bool ASGPlayer::IsCrouching() const
+{
+	return bIsCrouching;
 }
 
 void ASGPlayer::MoveUpDown(float AxisValue)
@@ -114,4 +153,29 @@ void ASGPlayer::SetHealingTimer()
 	{
 		bIsHealing = true;
 	}), PlayerService::HealingTimer, false);
+}
+
+void ASGPlayer::Fire()
+{
+	SGCHECK(Weapon);
+	Weapon->Fire();
+}
+
+void ASGPlayer::DoCrouch()
+{
+	if (GetMovementComponent()->IsFalling())
+	{
+		return;
+	}
+
+	if (bIsCrouching)
+	{
+		bIsCrouching = false;
+		GetCharacterMovement()->MaxWalkSpeed = PlayerService::DefaultMaxWalkSpeed;
+	}
+	else
+	{
+		bIsCrouching = true;
+		GetCharacterMovement()->MaxWalkSpeed = PlayerService::CrouchMaxWalkSpeed;
+	}
 }
