@@ -17,11 +17,20 @@ protected:
 
 public:
 	void Fire();
+	void UseAmmo();
+	bool HasAmmo() const;
+	float GetFireRate() const;
 
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	USkeletalMeshComponent* MeshComponent;
 
-	UPROPERTY(EditDefaultsOnly, category = "Projectile", meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, category = "bullet", meta = (AllowPrivateAccess = true))
 	TSubclassOf<class ASGProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
+	int32 Ammo;
+
+	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
+	float FireRate;
 };

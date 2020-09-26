@@ -20,5 +20,24 @@ void USGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsInAir = Player->GetMovementComponent()->IsFalling();
 		bIsCrouching = Player->IsCrouching();
 		bIsSprint = Player->IsSprint();
+		AimRotation = GetForwardAimRotation();
 	}
+}
+
+FRotator USGPlayerAnimInstance::GetForwardAimRotation()
+{
+	auto ControlRotation = Player->GetControlRotation();
+	auto ControlPitch = ControlRotation.Pitch;
+	if (ControlPitch > 180)
+	{
+		ControlPitch = 360 - ControlPitch;
+	}
+	else
+	{
+		ControlPitch *= -1;
+	}
+
+	ControlPitch /= 3;
+
+	return FRotator(0.0f, 0.0f, ControlPitch);
 }

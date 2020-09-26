@@ -19,6 +19,9 @@ private:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
+	FRotator GetForwardAimRotation();
+
+private:
 	UPROPERTY()
 	class ASGPlayer* Player;
 
@@ -36,4 +39,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
 	bool bIsSprint;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
+	FRotator AimRotation;
 };

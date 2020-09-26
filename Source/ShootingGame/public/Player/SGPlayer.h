@@ -37,6 +37,7 @@ private:
 	void SetHealingTimer();
 
 	void Fire();
+	void UnFire();
 	void DoCrouch();
 	void Sprint();
 	void SprintOff();
@@ -67,4 +68,5 @@ private:
 
 private:
 	FTimerHandle HealingTimerHandle;
+	FTimerHandle FireTimerHandle;
 };

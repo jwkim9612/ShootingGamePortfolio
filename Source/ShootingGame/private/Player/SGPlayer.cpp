@@ -76,6 +76,7 @@ void ASGPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &ASGPlayer::Jump);
 	PlayerInputComponent->BindAction(TEXT("Hit"), EInputEvent::IE_Pressed, this, &ASGPlayer::TakeHit);
 	PlayerInputComponent->BindAction(TEXT("PrimaryFire"), EInputEvent::IE_Pressed, this, &ASGPlayer::Fire);
+	PlayerInputComponent->BindAction(TEXT("PrimaryFire"), EInputEvent::IE_Released, this, &ASGPlayer::UnFire);
 	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Pressed, this, &ASGPlayer::DoCrouch);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &ASGPlayer::Sprint);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Repeat, this, &ASGPlayer::Sprint);
@@ -167,7 +168,29 @@ void ASGPlayer::SetHealingTimer()
 void ASGPlayer::Fire()
 {
 	SGCHECK(Weapon);
+	if (!Weapon->HasAmmo())
+	{
+		return;
+	}
+
 	Weapon->Fire();
+
+	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, FTimerDelegate::CreateLambda([this]() -> void
+	{
+		if (Weapon->HasAmmo())
+		{
+			Weapon->Fire();
+		}
+		else
+		{
+			UnFire();
+		}
+	}), Weapon->GetFireRate(), true);
+}
+
+void ASGPlayer::UnFire()
+{
+	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 }
 
 void ASGPlayer::DoCrouch()
@@ -192,7 +215,7 @@ void ASGPlayer::DoCrouch()
 void ASGPlayer::Sprint()
 {
 	if (bIsSprint ||
-		GetVelocity().Size() < 0 ||
+		GetVelocity().Size() < 0 || // 뒤로 움직였을 때 추가하기.
 		GetCharacterMovement()->IsFalling() || 
 		bIsCrouching)
 	{
@@ -201,6 +224,7 @@ void ASGPlayer::Sprint()
 
 	if (!bIsSprint)
 	{
+		SGLOG(Warning, TEXT("Sprint!!"));
 		bIsSprint = true;
 		GetCharacterMovement()->MaxWalkSpeed = PlayerService::SprintMaxWalkSpeed;
 	}

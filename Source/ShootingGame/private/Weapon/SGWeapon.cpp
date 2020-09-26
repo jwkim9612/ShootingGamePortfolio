@@ -26,5 +26,31 @@ void ASGWeapon::Fire()
 		FVector LaunchDirection = MuzzleRotation.Vector();
 		Projectile->SetProjectileRotation(MuzzleRotation);
 		Projectile->FireInDirection(LaunchDirection);
+		UseAmmo();
 	}
+}
+
+void ASGWeapon::UseAmmo()
+{
+	if (Ammo > 0)
+	{
+		--Ammo;
+	}
+}
+
+bool ASGWeapon::HasAmmo() const
+{
+	if (Ammo > 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+float ASGWeapon::GetFireRate() const
+{
+	return FireRate;
 }
