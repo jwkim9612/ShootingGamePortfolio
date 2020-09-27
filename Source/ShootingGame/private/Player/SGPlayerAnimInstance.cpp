@@ -24,6 +24,18 @@ void USGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
+float USGPlayerAnimInstance::PlayReloadAnimation()
+{
+	if(ReloadAnimMontage == nullptr)
+	{
+		SGLOG(Error, TEXT("ReloadAnimMontage is null!!"));
+		return 0.0f;
+	}
+
+	float PlayDuration = Montage_Play(ReloadAnimMontage);
+	return PlayDuration;
+}
+
 FRotator USGPlayerAnimInstance::GetForwardAimRotation()
 {
 	auto ControlRotation = Player->GetControlRotation();

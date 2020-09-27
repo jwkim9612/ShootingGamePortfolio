@@ -6,6 +6,7 @@
 #include "SGHUDWidget.h"
 #include "SGWeapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "SGPlayerAnimInstance.h"
 
 ASGPlayer::ASGPlayer()
 {
@@ -24,6 +25,8 @@ ASGPlayer::ASGPlayer()
 
 	bIsCrouching = false;
 	bIsSprint = false;
+	bIsReloading = false;
+	bIsAimDownSight = false;
 }
 
 void ASGPlayer::BeginPlay()
@@ -32,6 +35,7 @@ void ASGPlayer::BeginPlay()
 	
 	SGPlayerController = Cast<ASGPlayerController>(GetController());
 	SGPlayerState = Cast<ASGPlayerState>(SGPlayerController->PlayerState);
+	SGPlayerAnimInstance = Cast<USGPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 
 	SGPlayerState->InitPlayerData(this);
 
@@ -81,6 +85,7 @@ void ASGPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &ASGPlayer::Sprint);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Repeat, this, &ASGPlayer::Sprint);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Released, this, &ASGPlayer::SprintOff);
+	PlayerInputComponent->BindAction(TEXT("Reload"), EInputEvent::IE_Pressed, this, &ASGPlayer::Reload);
 	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ASGPlayer::MoveUpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveRightLeft"), this, &ASGPlayer::MoveRightLeft);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ASGPlayer::Turn);
@@ -168,7 +173,7 @@ void ASGPlayer::SetHealingTimer()
 void ASGPlayer::Fire()
 {
 	SGCHECK(Weapon);
-	if (!Weapon->HasAmmo())
+	if (!Weapon->HasAmmo() || bIsReloading)
 	{
 		return;
 	}
@@ -193,9 +198,26 @@ void ASGPlayer::UnFire()
 	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 }
 
+void ASGPlayer::Reload()
+{
+	if (Weapon->IsFullAmmo() || bIsReloading || bIsAimDownSight)
+	{
+		return;
+	}
+
+	bIsReloading = true;
+	float PlayDuration = SGPlayerAnimInstance->PlayReloadAnimation();
+
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]() -> void
+	{
+		Weapon->Reload();
+		bIsReloading = false;
+	}), PlayDuration, false);
+}
+
 void ASGPlayer::DoCrouch()
 {
-	if (GetMovementComponent()->IsFalling() || bIsSprint)
+	if (GetMovementComponent()->IsFalling() || bIsSprint || bIsReloading)
 	{
 		return;
 	}
@@ -217,7 +239,9 @@ void ASGPlayer::Sprint()
 	if (bIsSprint ||
 		GetVelocity().Size() < 0 || // 뒤로 움직였을 때 추가하기.
 		GetCharacterMovement()->IsFalling() || 
-		bIsCrouching)
+		bIsCrouching ||
+		bIsReloading ||
+		bIsAimDownSight)
 	{
 		return;
 	}

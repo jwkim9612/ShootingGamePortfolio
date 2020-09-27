@@ -38,6 +38,7 @@ private:
 
 	void Fire();
 	void UnFire();
+	void Reload();
 	void DoCrouch();
 	void Sprint();
 	void SprintOff();
@@ -52,6 +53,9 @@ private:
 	UPROPERTY()
 	class ASGPlayerState* SGPlayerState;
 
+	UPROPERTY()
+	class USGPlayerAnimInstance * SGPlayerAnimInstance;
+
 private:
 	UPROPERTY()
 	class ASGWeapon* Weapon;
@@ -63,10 +67,18 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	bool bIsHealing;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
+	bool bIsReloading;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Stat", meta = (AllowPrivateAccess = true))
+	bool bIsAimDownSight;
+
 	bool bIsCrouching;
 	bool bIsSprint;
+
 
 private:
 	FTimerHandle HealingTimerHandle;
 	FTimerHandle FireTimerHandle;
+	FTimerHandle ReloadTimerHandle;
 };

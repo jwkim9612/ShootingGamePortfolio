@@ -30,6 +30,26 @@ void ASGWeapon::Fire()
 	}
 }
 
+void ASGWeapon::Reload()
+{
+	if (IsFullAmmo())
+	{
+		return;
+	}
+
+	int32 ReloadValues = ClipSize - Ammo;
+	if (ReloadValues > MaxAmmo)
+	{
+		Ammo += MaxAmmo;
+		MaxAmmo = 0;
+	}
+	else
+	{
+		MaxAmmo -= ReloadValues;
+		Ammo += ReloadValues;
+	}
+}
+
 void ASGWeapon::UseAmmo()
 {
 	if (Ammo > 0)
@@ -61,4 +81,16 @@ void ASGWeapon::PlayMuzzleFlash()
 	auto MuzzleFlash = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlashParticle, MuzzleLocation, MuzzleRotation);
 	// 파티클 크기가 너무 커서 일단 Scale을 0.1f로 줄임
 	MuzzleFlash->SetWorldScale3D(FVector(0.1f, 0.1f, 0.1f));
+}
+
+bool ASGWeapon::IsFullAmmo() const
+{
+	if (Ammo == ClipSize)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

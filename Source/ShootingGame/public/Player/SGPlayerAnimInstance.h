@@ -12,11 +12,14 @@ class SHOOTINGGAME_API USGPlayerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
-public:
+
 
 private:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+public:
+	float PlayReloadAnimation();
 
 private:
 	FRotator GetForwardAimRotation();
@@ -42,4 +45,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
 	FRotator AimRotation;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
+	UAnimMontage* ReloadAnimMontage;
 };

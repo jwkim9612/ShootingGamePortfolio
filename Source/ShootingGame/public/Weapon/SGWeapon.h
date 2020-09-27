@@ -17,10 +17,12 @@ protected:
 
 public:
 	void Fire();
+	void Reload();
 	void UseAmmo();
 	bool HasAmmo() const;
 	float GetFireRate() const;
 	void PlayMuzzleFlash();
+	bool IsFullAmmo() const;
 
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
@@ -29,7 +31,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, category = "bullet", meta = (AllowPrivateAccess = true))
 	TSubclassOf<class ASGProjectile> ProjectileClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
+	int32 MaxAmmo;
+
+	UPROPERTY(EditAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
+	int32 ClipSize;
+
+	UPROPERTY(EditAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
 	int32 Ammo;
 
 	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
