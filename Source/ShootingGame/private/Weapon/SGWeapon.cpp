@@ -11,14 +11,13 @@ void ASGWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
 }
 
 void ASGWeapon::Fire()
 {
 	SGCHECK(ProjectileClass);
-	auto MuzzleLocation = MeshComponent->GetSocketLocation(TEXT("Muzzle"));
-	auto MuzzleRotation = MeshComponent->GetSocketRotation(TEXT("Muzzle"));
+	MuzzleLocation = MeshComponent->GetSocketLocation(TEXT("Muzzle"));
+	MuzzleRotation = MeshComponent->GetSocketRotation(TEXT("Muzzle"));
 
 	auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &MuzzleLocation));
 	if (Projectile != nullptr)
@@ -27,6 +26,7 @@ void ASGWeapon::Fire()
 		Projectile->SetProjectileRotation(MuzzleRotation);
 		Projectile->FireInDirection(LaunchDirection);
 		UseAmmo();
+		PlayMuzzleFlash();
 	}
 }
 
@@ -53,4 +53,12 @@ bool ASGWeapon::HasAmmo() const
 float ASGWeapon::GetFireRate() const
 {
 	return FireRate;
+}
+
+void ASGWeapon::PlayMuzzleFlash()
+{
+	SGCHECK(MuzzleFlashParticle);
+	auto MuzzleFlash = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlashParticle, MuzzleLocation, MuzzleRotation);
+	// 파티클 크기가 너무 커서 일단 Scale을 0.1f로 줄임
+	MuzzleFlash->SetWorldScale3D(FVector(0.1f, 0.1f, 0.1f));
 }

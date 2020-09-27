@@ -38,7 +38,7 @@ void ASGPlayer::BeginPlay()
 
 	// ¹«±â ÀåÂø //
 
-	auto MyClass = Cast<UClass>(FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).ResolveClass());
+	auto MyClass = Cast<UClass>(FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGAK47.BP_SGAK47_C")).ResolveClass());
 	SGCHECK(MyClass);
 
 	if (MyClass != nullptr)

@@ -20,6 +20,7 @@ public:
 	void UseAmmo();
 	bool HasAmmo() const;
 	float GetFireRate() const;
+	void PlayMuzzleFlash();
 
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
@@ -33,4 +34,11 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
 	float FireRate;
+
+	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UParticleSystem* MuzzleFlashParticle;
+
+private:
+	FVector MuzzleLocation;
+	FRotator MuzzleRotation;
 };
