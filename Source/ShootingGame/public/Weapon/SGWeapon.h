@@ -20,7 +20,9 @@ public:
 	void Reload();
 	void UseAmmo();
 	bool HasAmmo() const;
+	bool HasMaxAmmo() const;
 	float GetFireRate() const;
+	float GetRecoli() const;
 	void PlayMuzzleFlash();
 	bool IsFullAmmo() const;
 
@@ -42,6 +44,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
 	float FireRate;
+
+	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
+	float Recoli;
 
 	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
 	UParticleSystem* MuzzleFlashParticle;

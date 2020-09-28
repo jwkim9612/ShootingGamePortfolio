@@ -16,17 +16,25 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	enum class FireMode : uint8
+	{
+		None,
+		Default,
+		Aiming
+	};
+
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Jump() override;
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
 	int32 GetHealth() const;
 
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	void TakeHit();
 	bool IsCrouching() const;
 	bool IsSprint() const;
+	bool IsAimDownSight() const;
 
 private:
 	void MoveUpDown(float AxisValue);
@@ -38,14 +46,21 @@ private:
 
 	void Fire();
 	void UnFire();
+	void Recoil();
 	void Reload();
 	void DoCrouch();
+	void AimDownSight();
+	void AimDownSightOff();
+	void SetCamera(FireMode NewFireMode);
 	void Sprint();
 	void SprintOff();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
 	UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
+	USpringArmComponent* SpringArm;
 
 	UPROPERTY()
 	class ASGPlayerController* SGPlayerController;
@@ -70,12 +85,12 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
 	bool bIsReloading;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Stat", meta = (AllowPrivateAccess = true))
-	bool bIsAimDownSight;
-
 	bool bIsCrouching;
 	bool bIsSprint;
+	bool bIsAimDownSight;
 
+	float ArmLengthTo;
+	float ArmLengthSpeed;
 
 private:
 	FTimerHandle HealingTimerHandle;

@@ -70,9 +70,26 @@ bool ASGWeapon::HasAmmo() const
 	}
 }
 
+bool ASGWeapon::HasMaxAmmo() const
+{
+	if (MaxAmmo > 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 float ASGWeapon::GetFireRate() const
 {
 	return FireRate;
+}
+
+float ASGWeapon::GetRecoli() const
+{
+	return Recoli;
 }
 
 void ASGWeapon::PlayMuzzleFlash()

@@ -16,12 +16,13 @@ ASGPlayer::ASGPlayer()
 	// 또 액터의 기준 위치가 다르기 때문에 Z축으로 절반 높이만큼 내려줘야 한다.
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 
-	//SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	
-	//SpringArm->SetupAttachment(RootComponent);
-	Camera->SetupAttachment(GetMesh());
-	Camera->SetActive(false, false);
+	SpringArm->SetupAttachment(RootComponent);
+	Camera->SetupAttachment(SpringArm);
+
+	SetCamera(FireMode::Default);
 
 	bIsCrouching = false;
 	bIsSprint = false;
@@ -59,6 +60,8 @@ void ASGPlayer::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaSeconds, ArmLengthSpeed);
+
 	if (bIsHealing)
 	{
 		if (SGPlayerState->IsMaxHP())
@@ -83,8 +86,10 @@ void ASGPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("PrimaryFire"), EInputEvent::IE_Released, this, &ASGPlayer::UnFire);
 	PlayerInputComponent->BindAction(TEXT("Crouch"), EInputEvent::IE_Pressed, this, &ASGPlayer::DoCrouch);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &ASGPlayer::Sprint);
-	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Repeat, this, &ASGPlayer::Sprint);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Axis, this, &ASGPlayer::Sprint);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Released, this, &ASGPlayer::SprintOff);
+	PlayerInputComponent->BindAction(TEXT("AimDownSight"), EInputEvent::IE_Pressed, this, &ASGPlayer::AimDownSight);
+	PlayerInputComponent->BindAction(TEXT("AimDownSight"), EInputEvent::IE_Released, this, &ASGPlayer::AimDownSightOff);
 	PlayerInputComponent->BindAction(TEXT("Reload"), EInputEvent::IE_Pressed, this, &ASGPlayer::Reload);
 	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ASGPlayer::MoveUpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveRightLeft"), this, &ASGPlayer::MoveRightLeft);
@@ -104,12 +109,6 @@ void ASGPlayer::Jump()
 	}
 }
 
-
-int32 ASGPlayer::GetHealth() const
-{
-	return Health;
-}
-
 float ASGPlayer::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
@@ -121,6 +120,11 @@ float ASGPlayer::TakeDamage(float Damage, FDamageEvent const & DamageEvent, ACon
 	SetHealingTimer();
 
 	return FinalDamage;
+}
+
+int32 ASGPlayer::GetHealth() const
+{
+	return Health;
 }
 
 void ASGPlayer::TakeHit()
@@ -139,14 +143,21 @@ bool ASGPlayer::IsSprint() const
 	return bIsSprint;
 }
 
+bool ASGPlayer::IsAimDownSight() const
+{
+	return bIsAimDownSight;
+}
+
 void ASGPlayer::MoveUpDown(float AxisValue)
 {
-	AddMovementInput(Camera->GetForwardVector(), AxisValue);
+	//AddMovementInput(Camera->GetForwardVector(), AxisValue);
+	AddMovementInput(GetActorForwardVector(), AxisValue);
 }
 
 void ASGPlayer::MoveRightLeft(float AxisValue)
 {
-	AddMovementInput(Camera->GetRightVector(), AxisValue);
+	//AddMovementInput(Camera->GetRightVector(), AxisValue);
+	AddMovementInput(GetActorRightVector(), AxisValue);
 }
 
 void ASGPlayer::Turn(float AxisValue)
@@ -156,7 +167,23 @@ void ASGPlayer::Turn(float AxisValue)
 
 void ASGPlayer::LookUp(float AxisValue)
 {
-	AddControllerPitchInput(AxisValue);
+	float SpringArmPitchValue = SpringArm->GetRelativeTransform().Rotator().Pitch;
+	if (AxisValue > 0)
+	{
+		if (SpringArmPitchValue > -60.0f)
+		{
+			SpringArm->AddRelativeRotation(FRotator(-AxisValue, 0.0f, 0.0f));
+			AddControllerPitchInput(AxisValue * 0.4);
+		}
+	}
+	else if (AxisValue < 0)
+	{
+		if (SpringArmPitchValue < 60.0f)
+		{
+			SpringArm->AddRelativeRotation(FRotator(-AxisValue, 0.0f, 0.0f));
+			AddControllerPitchInput(AxisValue * 0.4);
+		}
+	}
 }
 
 void ASGPlayer::SetHealingTimer()
@@ -173,18 +200,20 @@ void ASGPlayer::SetHealingTimer()
 void ASGPlayer::Fire()
 {
 	SGCHECK(Weapon);
-	if (!Weapon->HasAmmo() || bIsReloading)
+	if (!Weapon->HasAmmo() || bIsReloading || bIsSprint)
 	{
 		return;
 	}
 
 	Weapon->Fire();
+	Recoil();
 
 	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, FTimerDelegate::CreateLambda([this]() -> void
 	{
 		if (Weapon->HasAmmo())
 		{
 			Weapon->Fire();
+			Recoil();
 		}
 		else
 		{
@@ -198,9 +227,20 @@ void ASGPlayer::UnFire()
 	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 }
 
+void ASGPlayer::Recoil()
+{
+	// Pitch는 +값이 아래고 -값이 위여서 -처리해줌.
+	auto RecoliPitchValue = Weapon->GetRecoli();
+	auto RecoliYawValue = FMath::RandRange(-RecoliPitchValue, RecoliPitchValue);
+
+	SpringArm->AddRelativeRotation(FRotator(RecoliPitchValue, 0.0f, 0.0f));
+	AddControllerPitchInput(-RecoliPitchValue * 0.4f);
+	AddControllerYawInput(RecoliYawValue);
+}
+
 void ASGPlayer::Reload()
 {
-	if (Weapon->IsFullAmmo() || bIsReloading || bIsAimDownSight)
+	if (Weapon->IsFullAmmo() || bIsReloading || bIsAimDownSight || !Weapon->HasMaxAmmo())
 	{
 		return;
 	}
@@ -234,10 +274,43 @@ void ASGPlayer::DoCrouch()
 	}
 }
 
+void ASGPlayer::AimDownSight()
+{
+	bIsAimDownSight = true;
+	SetCamera(FireMode::Aiming);
+}
+
+void ASGPlayer::AimDownSightOff()
+{
+	bIsAimDownSight = false;
+	SetCamera(FireMode::Default);
+}
+
+void ASGPlayer::SetCamera(FireMode NewFireMode)
+{
+	switch (NewFireMode)
+	{
+	case FireMode::Default:
+		//SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, 150.0f, GetWorld()->GetDeltaSeconds(), 1.0f);
+		ArmLengthTo = 150.0f;
+		ArmLengthSpeed = 1.0f;
+		//SpringArm->TargetArmLength = 150.0f;
+		SpringArm->SetRelativeLocation(FVector(0.0f, 60.0f, 70.0f));
+		break;
+	case FireMode::Aiming:
+		//SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, 100.0f, GetWorld()->GetDeltaSeconds(), 1.0f);
+		ArmLengthTo = 100.0f;
+		ArmLengthSpeed = 1.0f;
+		//SpringArm->TargetArmLength = 100.0f;
+		SpringArm->SetRelativeLocation(FVector(0.0f, 60.0f, 70.0f));
+		break;
+	}
+}
+
 void ASGPlayer::Sprint()
 {
 	if (bIsSprint ||
-		GetVelocity().Size() < 0 || // 뒤로 움직였을 때 추가하기.
+		GetVelocity().Size() <= 0 || // 뒤로 움직였을 때 추가하기.
 		GetCharacterMovement()->IsFalling() || 
 		bIsCrouching ||
 		bIsReloading ||

@@ -20,6 +20,7 @@ void USGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsInAir = Player->GetMovementComponent()->IsFalling();
 		bIsCrouching = Player->IsCrouching();
 		bIsSprint = Player->IsSprint();
+		bIsAimDownSight = Player->IsAimDownSight();
 		AimRotation = GetForwardAimRotation();
 	}
 }

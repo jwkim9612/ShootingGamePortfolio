@@ -44,6 +44,9 @@ private:
 	bool bIsSprint;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
+	bool bIsAimDownSight;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
 	FRotator AimRotation;
 
 private:
