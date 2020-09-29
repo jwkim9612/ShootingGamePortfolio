@@ -97,7 +97,7 @@ void ASGWeapon::PlayMuzzleFlash()
 	SGCHECK(MuzzleFlashParticle);
 	auto MuzzleFlash = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlashParticle, MuzzleLocation, MuzzleRotation);
 	// 파티클 크기가 너무 커서 일단 Scale을 0.1f로 줄임
-	MuzzleFlash->SetWorldScale3D(FVector(0.1f, 0.1f, 0.1f));
+	//MuzzleFlash->SetWorldScale3D(FVector(0.1f, 0.1f, 0.1f));
 }
 
 bool ASGWeapon::IsFullAmmo() const

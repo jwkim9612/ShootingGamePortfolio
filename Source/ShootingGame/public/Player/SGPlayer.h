@@ -16,11 +16,13 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	enum class FireMode : uint8
+	enum class CameraMode : uint8
 	{
 		None,
-		Default,
-		Aiming
+		UnAiming,
+		Aiming,
+		Stand,
+		Crouch
 	};
 
 public:	
@@ -51,7 +53,7 @@ private:
 	void DoCrouch();
 	void AimDownSight();
 	void AimDownSightOff();
-	void SetCamera(FireMode NewFireMode);
+	void SetCamera(CameraMode NewCameraMode);
 	void Sprint();
 	void SprintOff();
 
@@ -91,6 +93,7 @@ private:
 
 	float ArmLengthTo;
 	float ArmLengthSpeed;
+	FVector ArmLocation;
 
 private:
 	FTimerHandle HealingTimerHandle;

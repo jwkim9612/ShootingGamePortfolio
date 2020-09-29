@@ -22,7 +22,9 @@ ASGPlayer::ASGPlayer()
 	SpringArm->SetupAttachment(RootComponent);
 	Camera->SetupAttachment(SpringArm);
 
-	SetCamera(FireMode::Default);
+	ArmLengthSpeed = 2.0f;
+	SetCamera(CameraMode::UnAiming);
+	SetCamera(CameraMode::Stand);
 
 	bIsCrouching = false;
 	bIsSprint = false;
@@ -61,6 +63,7 @@ void ASGPlayer::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaSeconds, ArmLengthSpeed);
+	SpringArm->SetRelativeLocation(FMath::VInterpTo(SpringArm->GetRelativeTransform().GetLocation(), ArmLocation, DeltaSeconds, ArmLengthSpeed));
 
 	if (bIsHealing)
 	{
@@ -265,11 +268,13 @@ void ASGPlayer::DoCrouch()
 	if (bIsCrouching)
 	{
 		bIsCrouching = false;
+		SetCamera(CameraMode::Stand);
 		GetCharacterMovement()->MaxWalkSpeed = PlayerService::DefaultMaxWalkSpeed;
 	}
 	else
 	{
 		bIsCrouching = true;
+		SetCamera(CameraMode::Crouch);
 		GetCharacterMovement()->MaxWalkSpeed = PlayerService::CrouchMaxWalkSpeed;
 	}
 }
@@ -277,32 +282,30 @@ void ASGPlayer::DoCrouch()
 void ASGPlayer::AimDownSight()
 {
 	bIsAimDownSight = true;
-	SetCamera(FireMode::Aiming);
+	SetCamera(CameraMode::Aiming);
 }
 
 void ASGPlayer::AimDownSightOff()
 {
 	bIsAimDownSight = false;
-	SetCamera(FireMode::Default);
+	SetCamera(CameraMode::UnAiming);
 }
 
-void ASGPlayer::SetCamera(FireMode NewFireMode)
+void ASGPlayer::SetCamera(CameraMode NewCameraMode)
 {
-	switch (NewFireMode)
+	switch (NewCameraMode)
 	{
-	case FireMode::Default:
-		//SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, 150.0f, GetWorld()->GetDeltaSeconds(), 1.0f);
+	case CameraMode::UnAiming:
 		ArmLengthTo = 150.0f;
-		ArmLengthSpeed = 1.0f;
-		//SpringArm->TargetArmLength = 150.0f;
-		SpringArm->SetRelativeLocation(FVector(0.0f, 60.0f, 70.0f));
 		break;
-	case FireMode::Aiming:
-		//SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, 100.0f, GetWorld()->GetDeltaSeconds(), 1.0f);
+	case CameraMode::Aiming:
 		ArmLengthTo = 100.0f;
-		ArmLengthSpeed = 1.0f;
-		//SpringArm->TargetArmLength = 100.0f;
-		SpringArm->SetRelativeLocation(FVector(0.0f, 60.0f, 70.0f));
+		break;
+	case CameraMode::Stand:
+		ArmLocation = FVector(0.0f, 60.0f, 70.0f);
+		break;
+	case CameraMode::Crouch:
+		ArmLocation = FVector(0.0f, 60.0f, 20.0f);
 		break;
 	}
 }
