@@ -70,6 +70,11 @@ void ASGWeapon::UseAmmo()
 	}
 }
 
+void ASGWeapon::AddMaxAmmo(int32 IncreaseValue)
+{
+	MaxAmmo += IncreaseValue;
+}
+
 bool ASGWeapon::HasAmmo() const
 {
 	if (Ammo > 0)

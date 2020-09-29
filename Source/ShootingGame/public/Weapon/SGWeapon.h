@@ -19,6 +19,7 @@ public:
 	void Fire(FVector TargetLocation);
 	void Reload();
 	void UseAmmo();
+	void AddMaxAmmo(int32 IncreaseValue);
 	bool HasAmmo() const;
 	bool HasMaxAmmo() const;
 	float GetFireRate() const;

@@ -32,6 +32,7 @@ public:
 
 public:
 	int32 GetHealth() const;
+	class ASGWeapon* GetWeapon() const;
 
 	void TakeHit();
 	bool IsCrouching() const;

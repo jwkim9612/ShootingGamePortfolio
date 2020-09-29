@@ -133,6 +133,11 @@ int32 ASGPlayer::GetHealth() const
 	return Health;
 }
 
+ASGWeapon * ASGPlayer::GetWeapon() const
+{
+	return Weapon;
+}
+
 void ASGPlayer::TakeHit()
 {
 	FDamageEvent DamageEvent;
