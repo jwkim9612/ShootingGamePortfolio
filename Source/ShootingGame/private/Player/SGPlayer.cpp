@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SGPlayerAnimInstance.h"
 #include "DrawDebugHelpers.h"
+#include "SGCrossHair.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ASGPlayer::ASGPlayer()
 {
@@ -226,9 +228,15 @@ void ASGPlayer::Fire()
 
 void ASGPlayer::FireOnCrossHair()
 {
+	float SpreadValue = SGPlayerController->GetSGHUDWidget()->GetSGCrossHair()->GetSpreadValue();
+	float RandomYawValue = FMath::RandRange(-SpreadValue, SpreadValue) * 0.1f;
+	float RandomPitchValue = FMath::RandRange(-SpreadValue, SpreadValue) * 0.1f;
+	FRotator FinalRotation = UKismetMathLibrary::ComposeRotators(FRotator(RandomPitchValue, RandomYawValue, 0.0f), Camera->GetComponentToWorld().GetRotation().Rotator());
+	FVector FinalVector = UKismetMathLibrary::GetForwardVector(FinalRotation);
+
 	FHitResult HitResult;
 	auto Start = Camera->GetComponentToWorld().GetLocation();
-	auto End = Camera->GetForwardVector() * 100000 + Start;
+	auto End = FinalVector * 100000 + Start;
 
 	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, ESceneDepthPriorityGroup::SDPG_World, 2.0f);
 

@@ -17,6 +17,7 @@ protected:
 
 public:
 	void SetSpreadValue(float NewSpreadValue);
+	float GetSpreadValue() const;
 
 private:
 	void SpreadCrossHair(float NewSpreadValue);

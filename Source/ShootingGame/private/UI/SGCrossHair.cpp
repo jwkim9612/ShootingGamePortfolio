@@ -17,6 +17,11 @@ void USGCrossHair::SetSpreadValue(float NewSpreadValue)
 	SpreadValue = NewSpreadValue;
 }
 
+float USGCrossHair::GetSpreadValue() const
+{
+	return SpreadValue;
+}
+
 void USGCrossHair::SpreadCrossHair(float NewSpreadValue)
 {
 	Top->SetRenderTranslation(FVector2D(0.0f, -NewSpreadValue));
