@@ -1,5 +1,6 @@
 #include "SGHUDWidget.h"
 #include "SGHPBar.h"
+#include "SGCrossHair.h"
 
 bool USGHUDWidget::Initialize()
 {
@@ -33,4 +34,9 @@ void USGHUDWidget::PlayFadeOutHPBarAnimation()
 USGHPBar* USGHUDWidget::GetSGHPBar() const
 {
 	return SGHPBar;
+}
+
+USGCrossHair * USGHUDWidget::GetSGCrossHair() const
+{
+	return SGCrossHair;
 }

@@ -3,6 +3,7 @@
 #include "SGHitEffectWidget.h"
 #include "SGPlayerState.h"
 #include "SGHPBar.h"
+#include "SGCrossHair.h"
 
 ASGPlayerController::ASGPlayerController()
 {
@@ -49,6 +50,13 @@ USGHitEffectWidget * ASGPlayerController::GetSGHitEffectWidget() const
 USGHUDWidget * ASGPlayerController::GetSGHUDWidget() const
 {
 	return SGHUDWidget;
+}
+
+void ASGPlayerController::SetSpreadCrossHair(float SpreadValue)
+{
+	auto CrossHair = SGHUDWidget->GetSGCrossHair();
+	SGCHECK(CrossHair);
+	CrossHair->SetSpreadValue(SpreadValue);
 }
 
 void ASGPlayerController::BindWidgetToPlayerState()

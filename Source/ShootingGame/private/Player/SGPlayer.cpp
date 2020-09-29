@@ -7,6 +7,7 @@
 #include "SGWeapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SGPlayerAnimInstance.h"
+#include "DrawDebugHelpers.h"
 
 ASGPlayer::ASGPlayer()
 {
@@ -208,21 +209,41 @@ void ASGPlayer::Fire()
 		return;
 	}
 
-	Weapon->Fire();
-	Recoil();
-
+	FireOnCrossHair();
+	
 	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, FTimerDelegate::CreateLambda([this]() -> void
 	{
 		if (Weapon->HasAmmo())
 		{
-			Weapon->Fire();
-			Recoil();
+			FireOnCrossHair();
 		}
 		else
 		{
 			UnFire();
 		}
 	}), Weapon->GetFireRate(), true);
+}
+
+void ASGPlayer::FireOnCrossHair()
+{
+	FHitResult HitResult;
+	auto Start = Camera->GetComponentToWorld().GetLocation();
+	auto End = Camera->GetForwardVector() * 100000 + Start;
+
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, ESceneDepthPriorityGroup::SDPG_World, 2.0f);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility))
+	{
+		Weapon->Fire(HitResult.ImpactPoint);
+		Recoil();
+		SpreadCorssHairSetting();
+	}
+	else
+	{
+		Weapon->Fire(HitResult.ImpactPoint);
+		Recoil();
+		SpreadCorssHairSetting();
+	}
 }
 
 void ASGPlayer::UnFire()
@@ -337,4 +358,40 @@ void ASGPlayer::SprintOff()
 		bIsSprint = false;
 		GetCharacterMovement()->MaxWalkSpeed = PlayerService::DefaultMaxWalkSpeed;
 	}
+}
+
+void ASGPlayer::SpreadCorssHairSetting()
+{
+	if (bIsAimDownSight)
+	{
+		if (IsMoving())
+		{
+			SGPlayerController->SetSpreadCrossHair(40.0f);
+		}
+		else
+		{
+			SGPlayerController->SetSpreadCrossHair(20.0f);
+		}
+	}
+	else
+	{
+		if (IsMoving())
+		{
+			SGPlayerController->SetSpreadCrossHair(70.0f);
+		}
+		else
+		{
+			SGPlayerController->SetSpreadCrossHair(50.0f);
+		}
+	}
+}
+
+bool ASGPlayer::IsMoving()
+{
+	if (GetCharacterMovement()->Velocity.Size() > 0)
+	{
+		return true;
+	}
+
+	return false;
 }

@@ -1,5 +1,6 @@
 #include "SGWeapon.h"
 #include "SGProjectile.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ASGWeapon::ASGWeapon()
 {
@@ -13,18 +14,29 @@ void ASGWeapon::BeginPlay()
 	
 }
 
-void ASGWeapon::Fire()
+void ASGWeapon::Fire(FVector TargetLocation)
 {
 	SGCHECK(ProjectileClass);
 	MuzzleLocation = MeshComponent->GetSocketLocation(TEXT("Muzzle"));
 	MuzzleRotation = MeshComponent->GetSocketRotation(TEXT("Muzzle"));
 
-	auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &MuzzleLocation));
+	/*auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &MuzzleLocation));
 	if (Projectile != nullptr)
 	{
 		FVector LaunchDirection = MuzzleRotation.Vector();
 		Projectile->SetProjectileRotation(MuzzleRotation);
 		Projectile->FireInDirection(LaunchDirection);
+		UseAmmo();
+		PlayMuzzleFlash();
+	}*/
+
+	auto FinalRotation = UKismetMathLibrary::FindLookAtRotation(MuzzleLocation, TargetLocation);
+	auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &MuzzleLocation, &FinalRotation));
+	if (Projectile != nullptr)
+	{
+		//FVector LaunchDirection = MuzzleRotation.Vector();
+		//Projectile->SetProjectileRotation(MuzzleRotation);
+		//Projectile->FireInDirection(LaunchDirection);
 		UseAmmo();
 		PlayMuzzleFlash();
 	}

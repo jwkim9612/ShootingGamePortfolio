@@ -47,6 +47,7 @@ private:
 	void SetHealingTimer();
 
 	void Fire();
+	void FireOnCrossHair();
 	void UnFire();
 	void Recoil();
 	void Reload();
@@ -56,6 +57,9 @@ private:
 	void SetCamera(CameraMode NewCameraMode);
 	void Sprint();
 	void SprintOff();
+	// 후에 이름 바꿀것. // 조준선 확산 처리.
+	void SpreadCorssHairSetting();
+	bool IsMoving();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))

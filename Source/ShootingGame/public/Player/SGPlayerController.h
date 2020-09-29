@@ -21,6 +21,8 @@ public:
 	class USGHitEffectWidget* GetSGHitEffectWidget() const;
 	class USGHUDWidget* GetSGHUDWidget() const;
 
+	void SetSpreadCrossHair(float SpreadValue);
+
 private:
 	void BindWidgetToPlayerState();
 

@@ -11,10 +11,28 @@ UCLASS()
 class SHOOTINGGAME_API USGCrossHair : public UUserWidget
 {
 	GENERATED_BODY()
-	
-public:
 
+protected:
+	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+public:
+	void SetSpreadValue(float NewSpreadValue);
 
 private:
-	float CurrentSpeed;
+	void SpreadCrossHair(float NewSpreadValue);
+
+private:
+	UPROPERTY(meta = (BindWidget))
+	class UVerticalBox* Top;
+
+	UPROPERTY(meta = (BindWidget))
+	class UVerticalBox* Down;
+
+	UPROPERTY(meta = (BindWidget))
+	class UVerticalBox* Left;
+
+	UPROPERTY(meta = (BindWidget))
+	class UVerticalBox* Right;
+
+	float SpreadValue;
 };

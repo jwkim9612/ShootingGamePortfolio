@@ -20,10 +20,14 @@ public:
 	void PlayFadeOutHPBarAnimation();
 
 	class USGHPBar* GetSGHPBar() const;
+	class USGCrossHair* GetSGCrossHair() const;
 
 private:
 	UPROPERTY(meta = (BindWidget))
 	class USGHPBar* SGHPBar;
+
+	UPROPERTY(meta = (BindWidget))
+	class USGCrossHair* SGCrossHair;
 
 	UPROPERTY(meta = (BindWidgetAnim))
 	class UWidgetAnimation* FadeInHPBar;
