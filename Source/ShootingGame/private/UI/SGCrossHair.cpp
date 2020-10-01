@@ -1,25 +1,38 @@
 #include "SGCrossHair.h"
 #include "Components/VerticalBox.h"
 
+void USGCrossHair::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	SetCurrentSpreadValue(20.0f);
+	SetDefaultSpreadValue(20.0f);
+}
+
 void USGCrossHair::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	if (SpreadValue > 0)
+	if (CurrentSpreadValue != DefaultSpreadValue)
 	{
-		SpreadValue = FMath::FInterpTo(SpreadValue, 0.0f, InDeltaTime, 3.0f);
-		SpreadCrossHair(SpreadValue);
+		CurrentSpreadValue = FMath::FInterpTo(CurrentSpreadValue, DefaultSpreadValue, InDeltaTime, 3.0f);
+		SpreadCrossHair(CurrentSpreadValue);
 	}
 }
 
-void USGCrossHair::SetSpreadValue(float NewSpreadValue)
+void USGCrossHair::SetDefaultSpreadValue(float NewSpreadValue)
 {
-	SpreadValue = NewSpreadValue;
+	DefaultSpreadValue = NewSpreadValue;
+}
+
+void USGCrossHair::SetCurrentSpreadValue(float NewSpreadValue)
+{
+	CurrentSpreadValue = NewSpreadValue;
 }
 
 float USGCrossHair::GetSpreadValue() const
 {
-	return SpreadValue;
+	return CurrentSpreadValue;
 }
 
 void USGCrossHair::SpreadCrossHair(float NewSpreadValue)

@@ -29,6 +29,7 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UProjectileMovementComponent* MovementComponent;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
-	UAudioComponent* AudioComponent;
+public:
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* ParticleSystem;
 };

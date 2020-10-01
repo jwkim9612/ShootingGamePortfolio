@@ -54,11 +54,18 @@ USGHUDWidget * ASGPlayerController::GetSGHUDWidget() const
 	return SGHUDWidget;
 }
 
-void ASGPlayerController::SetSpreadCrossHair(float SpreadValue)
+void ASGPlayerController::SetDefaultSpreadCrossHair(float SpreadValue)
 {
 	auto CrossHair = SGHUDWidget->GetSGCrossHair();
 	SGCHECK(CrossHair);
-	CrossHair->SetSpreadValue(SpreadValue);
+	CrossHair->SetDefaultSpreadValue(SpreadValue);
+}
+
+void ASGPlayerController::SetCurrentSpreadCrossHair(float SpreadValue)
+{
+	auto CrossHair = SGHUDWidget->GetSGCrossHair();
+	SGCHECK(CrossHair);
+	CrossHair->SetCurrentSpreadValue(SpreadValue);
 }
 
 void ASGPlayerController::BindWidgetToPlayerState()

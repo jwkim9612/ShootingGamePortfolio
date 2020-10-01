@@ -13,4 +13,7 @@ public:
 	static const float DefaultMaxWalkSpeed;
 	static const float CrouchMaxWalkSpeed;
 	static const float SprintMaxWalkSpeed;
+
+	static const float DefaultAimSpreadValue;
+	static const float DefaultUnAimSpreadValue;
 };

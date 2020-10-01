@@ -5,7 +5,12 @@
 ASGWeapon::ASGWeapon()
 {
 	MeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComponent"));
+	FireAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("FireAudioComponent"));
+	ReloadAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("ReloadAudioComponent"));
+
 	SetRootComponent(MeshComponent);
+	FireAudioComponent->SetupAttachment(RootComponent);
+	ReloadAudioComponent->SetupAttachment(RootComponent);
 }
 
 void ASGWeapon::BeginPlay()
@@ -34,9 +39,10 @@ void ASGWeapon::Fire(FVector TargetLocation)
 	auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &MuzzleLocation, &FinalRotation));
 	if (Projectile != nullptr)
 	{
-		//FVector LaunchDirection = MuzzleRotation.Vector();
+		FVector LaunchDirection = FinalRotation.Vector();
 		//Projectile->SetProjectileRotation(MuzzleRotation);
-		//Projectile->FireInDirection(LaunchDirection);
+		Projectile->FireInDirection(LaunchDirection);
+		PlayFireSound();
 		UseAmmo();
 		PlayMuzzleFlash();
 	}
@@ -127,4 +133,21 @@ bool ASGWeapon::IsFullAmmo() const
 	{
 		return false;
 	}
+}
+
+void ASGWeapon::PlayFireSound()
+{
+	SGCHECK(FireAudioComponent);
+	FireAudioComponent->Play();
+}
+
+void ASGWeapon::PlayReloadSound()
+{
+	SGCHECK(ReloadAudioComponent);
+	ReloadAudioComponent->Play();
+}
+
+FVector ASGWeapon::GetMuzzleLocation() const
+{
+	return MeshComponent->GetSocketLocation(TEXT("Muzzle"));
 }

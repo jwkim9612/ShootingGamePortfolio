@@ -6,18 +6,14 @@ ASGProjectile::ASGProjectile()
 {
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	
 	SetRootComponent(MeshComponent);
-	AudioComponent->SetupAttachment(RootComponent);
-
 
 	MovementComponent->InitialSpeed = ProjectileService::DefaultInitialSpeed;
 	MovementComponent->MaxSpeed = ProjectileService::DefaultMaxSpeed;
 
 	// ม฿ทย
 	MovementComponent->ProjectileGravityScale = ProjectileService::DefaultProjectileGravityScale;
-
 }
 
 void ASGProjectile::BeginPlay()
@@ -44,5 +40,10 @@ void ASGProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	if (TargetActor != nullptr)
 	{
 		SGLOG(Warning, TEXT("Hit Character %s!!"), *Hit.BoneName.ToString());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, Hit.Location);
+		Destroy();
+		return;
 	}
+	
+	SGLOG(Warning, TEXT("Hit!!"));
 }

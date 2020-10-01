@@ -99,8 +99,13 @@ private:
 	bool bIsPressedAimDownSight;
 	bool bIsPressedSprint;
 
+	UPROPERTY(EditInstanceOnly, category = "camera", meta = (AllowPrivateAccess = true))
 	float ArmLengthTo;
+
+	UPROPERTY(EditInstanceOnly, category = "camera", meta = (AllowPrivateAccess = true))
 	float ArmLengthSpeed;
+
+	UPROPERTY(EditInstanceOnly, category = "camera", meta = (AllowPrivateAccess = true))
 	FVector ArmLocation;
 
 private:

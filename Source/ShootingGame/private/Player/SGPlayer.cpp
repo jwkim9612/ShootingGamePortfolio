@@ -26,8 +26,6 @@ ASGPlayer::ASGPlayer()
 	Camera->SetupAttachment(SpringArm);
 
 	ArmLengthSpeed = 2.0f;
-	SetCamera(CameraMode::UnAiming);
-	SetCamera(CameraMode::Stand);
 
 	bIsCrouching = false;
 	bIsSprint = false;
@@ -46,6 +44,8 @@ void ASGPlayer::BeginPlay()
 
 	SGPlayerState->InitPlayerData(this);
 
+	SetCamera(CameraMode::UnAiming);
+	SetCamera(CameraMode::Stand);
 
 	// ¹«±â ÀåÂø //
 
@@ -72,6 +72,7 @@ void ASGPlayer::Tick(float DeltaSeconds)
 		if (!bIsAimDownSight && !bIsSprint && !GetCharacterMovement()->IsFalling() && !bIsReloading)
 		{
 			bIsAimDownSight = true;
+			SGPlayerController->SetDefaultSpreadCrossHair(PlayerService::DefaultAimSpreadValue);
 			SetCamera(CameraMode::Aiming);
 		}
 	}
@@ -265,9 +266,10 @@ void ASGPlayer::FireOnCrossHair()
 
 	FHitResult HitResult;
 	auto Start = Camera->GetComponentToWorld().GetLocation();
+	//auto Start = Weapon->GetMuzzleLocation();
 	auto End = FinalVector * 100000 + Start;
 
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 2.0f, ESceneDepthPriorityGroup::SDPG_World, 2.0f);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 10.0f, ESceneDepthPriorityGroup::SDPG_World, 2.0f);
 
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility))
 	{
@@ -307,6 +309,8 @@ void ASGPlayer::Reload()
 	}
 
 	bIsReloading = true;
+
+	Weapon->PlayReloadSound();
 	float PlayDuration = SGPlayerAnimInstance->PlayReloadAnimation();
 
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]() -> void
@@ -346,6 +350,7 @@ void ASGPlayer::AimDownSightOff()
 {
 	bIsPressedAimDownSight = false;
 	bIsAimDownSight = false;
+	SGPlayerController->SetDefaultSpreadCrossHair(PlayerService::DefaultUnAimSpreadValue);
 	SetCamera(CameraMode::UnAiming);
 }
 
@@ -360,10 +365,10 @@ void ASGPlayer::SetCamera(CameraMode NewCameraMode)
 		ArmLengthTo = 100.0f;
 		break;
 	case CameraMode::Stand:
-		ArmLocation = FVector(0.0f, 60.0f, 70.0f);
+		ArmLocation = FVector(0.0f, 45.0f, 70.0f);
 		break;
 	case CameraMode::Crouch:
-		ArmLocation = FVector(0.0f, 60.0f, 20.0f);
+		ArmLocation = FVector(0.0f, 45.0f, 20.0f);
 		break;
 	}
 }
@@ -390,22 +395,22 @@ void ASGPlayer::SpreadCorssHairSetting()
 	{
 		if (IsMoving())
 		{
-			SGPlayerController->SetSpreadCrossHair(40.0f);
+			SGPlayerController->SetCurrentSpreadCrossHair(40.0f);
 		}
 		else
 		{
-			SGPlayerController->SetSpreadCrossHair(20.0f);
+			SGPlayerController->SetCurrentSpreadCrossHair(20.0f);
 		}
 	}
 	else
 	{
 		if (IsMoving())
 		{
-			SGPlayerController->SetSpreadCrossHair(70.0f);
+			SGPlayerController->SetCurrentSpreadCrossHair(70.0f);
 		}
 		else
 		{
-			SGPlayerController->SetSpreadCrossHair(50.0f);
+			SGPlayerController->SetCurrentSpreadCrossHair(50.0f);
 		}
 	}
 }

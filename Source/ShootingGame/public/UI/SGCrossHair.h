@@ -13,10 +13,12 @@ class SHOOTINGGAME_API USGCrossHair : public UUserWidget
 	GENERATED_BODY()
 
 protected:
+	void NativeConstruct() override;
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
-	void SetSpreadValue(float NewSpreadValue);
+	void SetDefaultSpreadValue(float NewSpreadValue);
+	void SetCurrentSpreadValue(float NewSpreadValue);
 	float GetSpreadValue() const;
 
 private:
@@ -35,5 +37,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* Right;
 
-	float SpreadValue;
+	float DefaultSpreadValue;
+	float CurrentSpreadValue;
 };

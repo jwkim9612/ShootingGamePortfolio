@@ -26,10 +26,20 @@ public:
 	float GetRecoli() const;
 	void PlayMuzzleFlash();
 	bool IsFullAmmo() const;
+	void PlayFireSound();
+	void PlayReloadSound();
+
+	FVector GetMuzzleLocation() const;
 
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	USkeletalMeshComponent* MeshComponent;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UAudioComponent* FireAudioComponent;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UAudioComponent* ReloadAudioComponent;
 
 	UPROPERTY(EditDefaultsOnly, category = "bullet", meta = (AllowPrivateAccess = true))
 	TSubclassOf<class ASGProjectile> ProjectileClass;
