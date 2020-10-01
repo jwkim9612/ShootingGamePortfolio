@@ -96,6 +96,9 @@ private:
 	bool bIsSprint;
 	bool bIsAimDownSight;
 
+	bool bIsPressedAimDownSight;
+	bool bIsPressedSprint;
+
 	float ArmLengthTo;
 	float ArmLengthSpeed;
 	FVector ArmLocation;

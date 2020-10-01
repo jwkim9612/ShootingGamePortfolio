@@ -18,6 +18,10 @@ protected:
 public:
 	void FireInDirection(const FVector & ShootDirection);
 	void SetProjectileRotation(FRotator &WeaponVector);
+
+private:
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	UStaticMeshComponent* MeshComponent;

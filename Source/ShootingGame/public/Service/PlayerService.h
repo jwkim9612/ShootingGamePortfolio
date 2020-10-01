@@ -8,8 +8,6 @@
 class SHOOTINGGAME_API PlayerService
 {
 public:
-
-public:
 	static const float HealingTimer;
 
 	static const float DefaultMaxWalkSpeed;

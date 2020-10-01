@@ -11,6 +11,7 @@ ASGProjectile::ASGProjectile()
 	SetRootComponent(MeshComponent);
 	AudioComponent->SetupAttachment(RootComponent);
 
+
 	MovementComponent->InitialSpeed = ProjectileService::DefaultInitialSpeed;
 	MovementComponent->MaxSpeed = ProjectileService::DefaultMaxSpeed;
 
@@ -22,7 +23,8 @@ ASGProjectile::ASGProjectile()
 void ASGProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	MeshComponent->OnComponentHit.AddDynamic(this, &ASGProjectile::OnHit);
 }
 
 // 발사체의 속도를 발사 방향으로 초기화시키는 함수입니다.
@@ -34,4 +36,13 @@ void ASGProjectile::FireInDirection(const FVector & ShootDirection)
 void ASGProjectile::SetProjectileRotation(FRotator & WeaponRotator)
 {
 	MeshComponent->SetRelativeRotation(FRotator(ProjectileService::PitchValueForShape, WeaponRotator.Yaw, 0.0f));
+}
+
+void ASGProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	ACharacter* TargetActor = Cast<ACharacter>(OtherActor);
+	if (TargetActor != nullptr)
+	{
+		SGLOG(Warning, TEXT("Hit Character %s!!"), *Hit.BoneName.ToString());
+	}
 }

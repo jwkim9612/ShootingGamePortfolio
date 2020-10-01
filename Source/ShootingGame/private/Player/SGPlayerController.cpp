@@ -33,9 +33,11 @@ void ASGPlayerController::BeginPlay()
 {
 	SGPlayerState = Cast<ASGPlayerState>(PlayerState);
 
+	SGCHECK(SGHUDWidgetClass);
 	SGHUDWidget = CreateWidget<USGHUDWidget>(this, SGHUDWidgetClass);
 	SGHUDWidget->AddToViewport(0);
 
+	SGCHECK(SGHitEffectWidgetClass);
 	SGHitEffectWidget = CreateWidget<USGHitEffectWidget>(this, SGHitEffectWidgetClass);
 	SGHitEffectWidget->AddToViewport(1);
 

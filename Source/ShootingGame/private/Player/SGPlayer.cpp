@@ -33,6 +33,7 @@ ASGPlayer::ASGPlayer()
 	bIsSprint = false;
 	bIsReloading = false;
 	bIsAimDownSight = false;
+	bIsPressedAimDownSight = false;
 }
 
 void ASGPlayer::BeginPlay()
@@ -64,6 +65,29 @@ void ASGPlayer::BeginPlay()
 void ASGPlayer::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	/////////// 점프중에 조준키 눌렀을 때, 장전  조준키 눌렀을 때 처리 /////////////
+	if (bIsPressedAimDownSight)
+	{
+		if (!bIsAimDownSight && !bIsSprint && !GetCharacterMovement()->IsFalling() && !bIsReloading)
+		{
+			bIsAimDownSight = true;
+			SetCamera(CameraMode::Aiming);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+
+	/////////// 달리기처리 /////////////
+	if (bIsPressedSprint)
+	{
+		if (!bIsSprint && GetVelocity().Size() > 0 && !GetCharacterMovement()->IsFalling() && !bIsCrouching && !bIsReloading && !bIsAimDownSight)
+		{
+			SGLOG(Warning, TEXT("Sprint!!"));
+			bIsSprint = true;
+			GetCharacterMovement()->MaxWalkSpeed = PlayerService::SprintMaxWalkSpeed;
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 
 	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaSeconds, ArmLengthSpeed);
 	SpringArm->SetRelativeLocation(FMath::VInterpTo(SpringArm->GetRelativeTransform().GetLocation(), ArmLocation, DeltaSeconds, ArmLengthSpeed));
@@ -277,7 +301,7 @@ void ASGPlayer::Recoil()
 
 void ASGPlayer::Reload()
 {
-	if (Weapon->IsFullAmmo() || bIsReloading || bIsAimDownSight || !Weapon->HasMaxAmmo())
+	if (Weapon->IsFullAmmo() || bIsReloading || bIsAimDownSight || !Weapon->HasMaxAmmo() || bIsSprint)
 	{
 		return;
 	}
@@ -315,12 +339,12 @@ void ASGPlayer::DoCrouch()
 
 void ASGPlayer::AimDownSight()
 {
-	bIsAimDownSight = true;
-	SetCamera(CameraMode::Aiming);
+	bIsPressedAimDownSight = true;
 }
 
 void ASGPlayer::AimDownSightOff()
 {
+	bIsPressedAimDownSight = false;
 	bIsAimDownSight = false;
 	SetCamera(CameraMode::UnAiming);
 }
@@ -346,26 +370,13 @@ void ASGPlayer::SetCamera(CameraMode NewCameraMode)
 
 void ASGPlayer::Sprint()
 {
-	if (bIsSprint ||
-		GetVelocity().Size() <= 0 || // 뒤로 움직였을 때 추가하기.
-		GetCharacterMovement()->IsFalling() || 
-		bIsCrouching ||
-		bIsReloading ||
-		bIsAimDownSight)
-	{
-		return;
-	}
-
-	if (!bIsSprint)
-	{
-		SGLOG(Warning, TEXT("Sprint!!"));
-		bIsSprint = true;
-		GetCharacterMovement()->MaxWalkSpeed = PlayerService::SprintMaxWalkSpeed;
-	}
+	bIsPressedSprint = true;
 }
 
 void ASGPlayer::SprintOff()
 {
+	bIsPressedSprint = false;
+
 	if (bIsSprint)
 	{
 		bIsSprint = false;
