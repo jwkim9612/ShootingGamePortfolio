@@ -62,6 +62,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
 	UParticleSystem* MuzzleFlashParticle;
 
+	UPROPERTY(EditAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
+	TArray<class ASGProjectile*> ProjectilePool;
+
+	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
+	int CurrentProjectileIndex;
+
 private:
 	FVector MuzzleLocation;
 	FRotator MuzzleRotation;

@@ -34,16 +34,53 @@ void ASGProjectile::SetProjectileRotation(FRotator & WeaponRotator)
 	MeshComponent->SetRelativeRotation(FRotator(ProjectileService::PitchValueForShape, WeaponRotator.Yaw, 0.0f));
 }
 
+void ASGProjectile::SetRotationFollowsVelocity(bool bIsOn)
+{
+	MovementComponent->bRotationFollowsVelocity = bIsOn;
+}
+
+void ASGProjectile::Disable()
+{
+	MovementComponent->SetVelocityInLocalSpace(FVector::ZeroVector);
+	MovementComponent->ProjectileGravityScale = 0.0f;
+	MovementComponent->Deactivate();
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+}
+
+void ASGProjectile::Activate()
+{
+	MovementComponent->ProjectileGravityScale = 0.05f;
+	MovementComponent->Activate(true);
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	SetDisableTimer(ProjectileService::DisableTimer);
+}
+
+void ASGProjectile::SetDisableTimer(float DisableTimer)
+{
+	GetWorld()->GetTimerManager().SetTimer(DisableTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
+		Disable();
+	}), DisableTimer, false);
+}
+
+void ASGProjectile::ClearDisableTimer()
+{
+	GetWorld()->GetTimerManager().ClearTimer(DisableTimerHandle);
+}
+
 void ASGProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
+
 	ACharacter* TargetActor = Cast<ACharacter>(OtherActor);
 	if (TargetActor != nullptr)
 	{
 		SGLOG(Warning, TEXT("Hit Character %s!!"), *Hit.BoneName.ToString());
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, Hit.Location);
-		Destroy();
-		return;
 	}
 	
-	SGLOG(Warning, TEXT("Hit!!"));
+
+
+	ClearDisableTimer();
+	Disable();
 }

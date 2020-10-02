@@ -18,16 +18,30 @@ protected:
 public:
 	void FireInDirection(const FVector & ShootDirection);
 	void SetProjectileRotation(FRotator &WeaponVector);
+	void SetRotationFollowsVelocity(bool bIsOn);
+
+	void Disable();
+	void Activate();
+
+private:
+	void SetDisableTimer(float DisableTimer);
+	void ClearDisableTimer();
 
 private:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	UStaticMeshComponent* MeshComponent;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	class UProjectileMovementComponent* MovementComponent;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	TSubclassOf<USceneComponent> aa;
+
+	FTimerHandle DisableTimerHandle;
 
 public:
 	UPROPERTY(EditAnywhere)

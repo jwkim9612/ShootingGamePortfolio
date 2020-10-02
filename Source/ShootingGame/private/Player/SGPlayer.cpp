@@ -261,28 +261,27 @@ void ASGPlayer::FireOnCrossHair()
 	float SpreadValue = SGPlayerController->GetSGHUDWidget()->GetSGCrossHair()->GetSpreadValue();
 	float RandomYawValue = FMath::RandRange(-SpreadValue, SpreadValue) * 0.1f;
 	float RandomPitchValue = FMath::RandRange(-SpreadValue, SpreadValue) * 0.1f;
+
 	FRotator FinalRotation = UKismetMathLibrary::ComposeRotators(FRotator(RandomPitchValue, RandomYawValue, 0.0f), Camera->GetComponentToWorld().GetRotation().Rotator());
 	FVector FinalVector = UKismetMathLibrary::GetForwardVector(FinalRotation);
 
 	FHitResult HitResult;
 	auto Start = Camera->GetComponentToWorld().GetLocation();
-	//auto Start = Weapon->GetMuzzleLocation();
 	auto End = FinalVector * 100000 + Start;
 
-	DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 10.0f, ESceneDepthPriorityGroup::SDPG_World, 2.0f);
+	//DrawDebugLine(GetWorld(), Start, End, FColor::Orange, false, 10.0f, ESceneDepthPriorityGroup::SDPG_World, 2.0f);
 
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility))
 	{
 		Weapon->Fire(HitResult.ImpactPoint);
-		Recoil();
-		SpreadCorssHairSetting();
 	}
 	else
 	{
-		Weapon->Fire(HitResult.ImpactPoint);
-		Recoil();
-		SpreadCorssHairSetting();
+		Weapon->Fire(HitResult.TraceEnd);
 	}
+
+	Recoil();
+	SpreadCorssHairSetting();
 }
 
 void ASGPlayer::UnFire()

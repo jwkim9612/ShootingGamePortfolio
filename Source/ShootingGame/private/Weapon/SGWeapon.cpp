@@ -11,12 +11,29 @@ ASGWeapon::ASGWeapon()
 	SetRootComponent(MeshComponent);
 	FireAudioComponent->SetupAttachment(RootComponent);
 	ReloadAudioComponent->SetupAttachment(RootComponent);
+
+	ProjectilePool.Reserve(10);
+
+	CurrentProjectileIndex = 0;
+
 }
 
 void ASGWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MuzzleLocation = MeshComponent->GetSocketLocation(TEXT("Muzzle"));
+	MuzzleRotation = MeshComponent->GetSocketRotation(TEXT("Muzzle"));
 	
+	for (int ProjectilePoolIndex = 0; ProjectilePoolIndex < 10; ProjectilePoolIndex++)
+	{
+		auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &FVector::ZeroVector, &MuzzleRotation));
+		if (Projectile != nullptr)
+		{
+			Projectile->Disable();
+			ProjectilePool.Emplace(Projectile);
+		}
+	}
 }
 
 void ASGWeapon::Fire(FVector TargetLocation)
@@ -25,27 +42,24 @@ void ASGWeapon::Fire(FVector TargetLocation)
 	MuzzleLocation = MeshComponent->GetSocketLocation(TEXT("Muzzle"));
 	MuzzleRotation = MeshComponent->GetSocketRotation(TEXT("Muzzle"));
 
-	/*auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &MuzzleLocation));
-	if (Projectile != nullptr)
-	{
-		FVector LaunchDirection = MuzzleRotation.Vector();
-		Projectile->SetProjectileRotation(MuzzleRotation);
-		Projectile->FireInDirection(LaunchDirection);
-		UseAmmo();
-		PlayMuzzleFlash();
-	}*/
-
+	// 오브젝트 풀링 //
 	auto FinalRotation = UKismetMathLibrary::FindLookAtRotation(MuzzleLocation, TargetLocation);
-	auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &MuzzleLocation, &FinalRotation));
-	if (Projectile != nullptr)
+	FVector LaunchDirection = FinalRotation.Vector();
+	if (CurrentProjectileIndex == 10)
 	{
-		FVector LaunchDirection = FinalRotation.Vector();
-		//Projectile->SetProjectileRotation(MuzzleRotation);
-		Projectile->FireInDirection(LaunchDirection);
-		PlayFireSound();
-		UseAmmo();
-		PlayMuzzleFlash();
+		CurrentProjectileIndex = 0;
 	}
+
+	auto CurrentProjectile = ProjectilePool[CurrentProjectileIndex];
+	CurrentProjectile->SetActorLocation(MuzzleLocation);
+	CurrentProjectile->FireInDirection(LaunchDirection);
+	CurrentProjectile->Activate();
+	PlayFireSound();
+	UseAmmo();
+	PlayMuzzleFlash();
+
+	++CurrentProjectileIndex;
+	//////////////////
 }
 
 void ASGWeapon::Reload()
@@ -119,8 +133,6 @@ void ASGWeapon::PlayMuzzleFlash()
 {
 	SGCHECK(MuzzleFlashParticle);
 	auto MuzzleFlash = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlashParticle, MuzzleLocation, MuzzleRotation);
-	// 파티클 크기가 너무 커서 일단 Scale을 0.1f로 줄임
-	//MuzzleFlash->SetWorldScale3D(FVector(0.1f, 0.1f, 0.1f));
 }
 
 bool ASGWeapon::IsFullAmmo() const

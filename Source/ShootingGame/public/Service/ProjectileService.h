@@ -13,4 +13,6 @@ public:
 	static const float DefaultProjectileGravityScale;
 
 	static const float PitchValueForShape;
+
+	static const float DisableTimer;
 };
