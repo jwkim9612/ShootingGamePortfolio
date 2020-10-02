@@ -38,12 +38,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
 	class UProjectileMovementComponent* MovementComponent;
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
-	TSubclassOf<USceneComponent> aa;
+	UPROPERTY()
+	class USGGameInstance* SGGameInstance;
 
 	FTimerHandle DisableTimerHandle;
-
-public:
-	UPROPERTY(EditAnywhere)
-	UParticleSystem* ParticleSystem;
 };

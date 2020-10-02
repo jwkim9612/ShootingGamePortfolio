@@ -1,4 +1,5 @@
 #include "SGProjectile.h"
+#include "SGGameInstance.h"
 #include "ProjectileService.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -19,6 +20,9 @@ ASGProjectile::ASGProjectile()
 void ASGProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SGGameInstance = Cast<USGGameInstance>(GetWorld()->GetGameInstance());
+	SGCHECK(SGGameInstance);
 
 	MeshComponent->OnComponentHit.AddDynamic(this, &ASGProjectile::OnHit);
 }
@@ -76,10 +80,12 @@ void ASGProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	if (TargetActor != nullptr)
 	{
 		SGLOG(Warning, TEXT("Hit Character %s!!"), *Hit.BoneName.ToString());
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, Hit.Location);
+		auto ParticleSystem = SGGameInstance->TryGetParticleSystem(FString("HitCharacter"));
+		if (ParticleSystem != nullptr)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, Hit.Location);
+		}
 	}
-	
-
 
 	ClearDisableTimer();
 	Disable();

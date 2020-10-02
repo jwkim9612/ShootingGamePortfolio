@@ -3,6 +3,7 @@
 #pragma once
 
 #include "EngineMinimal.h"
+#include "SGType.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(ShootingGame, Log, All);
 #define SGLOG_CALLINFO (FString(__FUNCTION__) + TEXT("(") + FString::FromInt(__LINE__) + TEXT(")"))
