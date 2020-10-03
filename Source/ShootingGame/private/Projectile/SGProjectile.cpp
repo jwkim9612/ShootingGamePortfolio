@@ -7,8 +7,10 @@ ASGProjectile::ASGProjectile()
 {
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
+	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystemComponent"));
 	
 	SetRootComponent(MeshComponent);
+	ParticleSystemComponent->SetupAttachment(RootComponent);
 
 	MovementComponent->InitialSpeed = ProjectileService::DefaultInitialSpeed;
 	MovementComponent->MaxSpeed = ProjectileService::DefaultMaxSpeed;
@@ -31,16 +33,7 @@ void ASGProjectile::BeginPlay()
 void ASGProjectile::FireInDirection(const FVector & ShootDirection)
 {
 	MovementComponent->Velocity = ShootDirection * MovementComponent->InitialSpeed;
-}
-
-void ASGProjectile::SetProjectileRotation(FRotator & WeaponRotator)
-{
-	MeshComponent->SetRelativeRotation(FRotator(ProjectileService::PitchValueForShape, WeaponRotator.Yaw, 0.0f));
-}
-
-void ASGProjectile::SetRotationFollowsVelocity(bool bIsOn)
-{
-	MovementComponent->bRotationFollowsVelocity = bIsOn;
+	MeshComponent->SetRelativeRotation(ShootDirection.Rotation());
 }
 
 void ASGProjectile::Disable()
@@ -81,6 +74,14 @@ void ASGProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	{
 		SGLOG(Warning, TEXT("Hit Character %s!!"), *Hit.BoneName.ToString());
 		auto ParticleSystem = SGGameInstance->TryGetParticleSystem(FString("HitCharacter"));
+		if (ParticleSystem != nullptr)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, Hit.Location);
+		}
+	}
+	else
+	{
+		auto ParticleSystem = SGGameInstance->TryGetParticleSystem(FString("HitWall"));
 		if (ParticleSystem != nullptr)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, Hit.Location);

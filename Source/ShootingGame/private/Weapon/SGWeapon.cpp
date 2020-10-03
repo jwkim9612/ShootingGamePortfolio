@@ -12,6 +12,12 @@ ASGWeapon::ASGWeapon()
 	FireAudioComponent->SetupAttachment(RootComponent);
 	ReloadAudioComponent->SetupAttachment(RootComponent);
 
+	FireAudioComponent->SetAutoActivate(false);
+	ReloadAudioComponent->SetAutoActivate(false);
+
+	FireAudioComponent->SetVolumeMultiplier(0.3f);
+	ReloadAudioComponent->SetVolumeMultiplier(0.3f);
+
 	ProjectilePool.Reserve(10);
 
 	CurrentProjectileIndex = 0;
@@ -22,18 +28,7 @@ void ASGWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MuzzleLocation = MeshComponent->GetSocketLocation(TEXT("Muzzle"));
-	MuzzleRotation = MeshComponent->GetSocketRotation(TEXT("Muzzle"));
-	
-	for (int ProjectilePoolIndex = 0; ProjectilePoolIndex < 10; ProjectilePoolIndex++)
-	{
-		auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &FVector::ZeroVector, &MuzzleRotation));
-		if (Projectile != nullptr)
-		{
-			Projectile->Disable();
-			ProjectilePool.Emplace(Projectile);
-		}
-	}
+	CreateProjectilePool();
 }
 
 void ASGWeapon::Fire(FVector TargetLocation)
@@ -55,8 +50,8 @@ void ASGWeapon::Fire(FVector TargetLocation)
 	CurrentProjectile->FireInDirection(LaunchDirection);
 	CurrentProjectile->Activate();
 	PlayFireSound();
-	UseAmmo();
 	PlayMuzzleFlash();
+	UseAmmo();
 
 	++CurrentProjectileIndex;
 	//////////////////
@@ -133,6 +128,7 @@ void ASGWeapon::PlayMuzzleFlash()
 {
 	SGCHECK(MuzzleFlashParticle);
 	auto MuzzleFlash = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlashParticle, MuzzleLocation, MuzzleRotation);
+	MuzzleFlash->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 }
 
 bool ASGWeapon::IsFullAmmo() const
@@ -159,7 +155,28 @@ void ASGWeapon::PlayReloadSound()
 	ReloadAudioComponent->Play();
 }
 
+void ASGWeapon::SetVisibility(bool bNewVisibility)
+{
+	MeshComponent->SetVisibility(bNewVisibility);
+}
+
 FVector ASGWeapon::GetMuzzleLocation() const
 {
 	return MeshComponent->GetSocketLocation(TEXT("Muzzle"));
+}
+
+void ASGWeapon::CreateProjectilePool()
+{
+	//MuzzleLocation = MeshComponent->GetSocketLocation(TEXT("Muzzle"));
+	MuzzleRotation = MeshComponent->GetSocketRotation(TEXT("Muzzle"));
+
+	for (int ProjectilePoolIndex = 0; ProjectilePoolIndex < 10; ProjectilePoolIndex++)
+	{
+		auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &FVector::ZeroVector, &MuzzleRotation));
+		if (Projectile != nullptr)
+		{
+			Projectile->Disable();
+			ProjectilePool.Emplace(Projectile);
+		}
+	}
 }

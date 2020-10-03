@@ -10,6 +10,7 @@
 #include "DrawDebugHelpers.h"
 #include "SGCrossHair.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "SGGameInstance.h"
 
 ASGPlayer::ASGPlayer()
 {
@@ -41,6 +42,12 @@ void ASGPlayer::BeginPlay()
 	SGPlayerController = Cast<ASGPlayerController>(GetController());
 	SGPlayerState = Cast<ASGPlayerState>(SGPlayerController->PlayerState);
 	SGPlayerAnimInstance = Cast<USGPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	SGGameInstance = Cast<USGGameInstance>(GetWorld()->GetGameInstance());
+
+	SGCHECK(SGPlayerController);
+	SGCHECK(SGPlayerState);
+	SGCHECK(SGPlayerAnimInstance);
+	SGCHECK(SGGameInstance);
 
 	SGPlayerState->InitPlayerData(this);
 
@@ -49,16 +56,26 @@ void ASGPlayer::BeginPlay()
 
 	// 무기 장착 //
 
-	auto MyClass = Cast<UClass>(FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGAK47.BP_SGAK47_C")).ResolveClass());
-	SGCHECK(MyClass);
+	//auto MyClass = Cast<UClass>(FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).ResolveClass());
+	//auto MyClass = FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).TryLoadClass<UClass>();
 
+	auto MyClass = SGGameInstance->TryGetWeaponClass(TEXT("DarknessRifle"));
 	if (MyClass != nullptr)
 	{
-		Weapon = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass, &FVector::ZeroVector, &FRotator::ZeroRotator));
-		SGCHECK(Weapon);
-		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
+		Rifle = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass, &FVector::ZeroVector, &FRotator::ZeroRotator));
+		SGCHECK(Rifle);
+		Rifle->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
 	}
 
+	auto MyClass2 = SGGameInstance->TryGetWeaponClass(TEXT("WhiteRifle"));
+	if (MyClass2 != nullptr)
+	{
+		Pistol = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass2, &FVector::ZeroVector, &FRotator::ZeroRotator));
+		SGCHECK(Pistol);
+		Pistol->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
+	}
+
+	SelectRifle();
 	//////////////
 }
 
@@ -122,6 +139,8 @@ void ASGPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("AimDownSight"), EInputEvent::IE_Pressed, this, &ASGPlayer::AimDownSight);
 	PlayerInputComponent->BindAction(TEXT("AimDownSight"), EInputEvent::IE_Released, this, &ASGPlayer::AimDownSightOff);
 	PlayerInputComponent->BindAction(TEXT("Reload"), EInputEvent::IE_Pressed, this, &ASGPlayer::Reload);
+	PlayerInputComponent->BindAction(TEXT("SelectRifle"), EInputEvent::IE_Pressed, this, &ASGPlayer::SelectRifle);
+	PlayerInputComponent->BindAction(TEXT("SelectPistol"), EInputEvent::IE_Pressed, this, &ASGPlayer::SelectPistol);
 	PlayerInputComponent->BindAxis(TEXT("MoveUpDown"), this, &ASGPlayer::MoveUpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveRightLeft"), this, &ASGPlayer::MoveRightLeft);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ASGPlayer::Turn);
@@ -158,9 +177,9 @@ int32 ASGPlayer::GetHealth() const
 	return Health;
 }
 
-ASGWeapon * ASGPlayer::GetWeapon() const
+ASGWeapon * ASGPlayer::GetCurrentWeapon() const
 {
-	return Weapon;
+	return CurrentWeapon;
 }
 
 void ASGPlayer::TakeHit()
@@ -177,6 +196,11 @@ bool ASGPlayer::IsCrouching() const
 bool ASGPlayer::IsSprint() const
 {
 	return bIsSprint;
+}
+
+bool ASGPlayer::IsReloading() const
+{
+	return bIsReloading;
 }
 
 bool ASGPlayer::IsAimDownSight() const
@@ -235,8 +259,8 @@ void ASGPlayer::SetHealingTimer()
 
 void ASGPlayer::Fire()
 {
-	SGCHECK(Weapon);
-	if (!Weapon->HasAmmo() || bIsReloading || bIsSprint)
+	SGCHECK(CurrentWeapon);
+	if (!CurrentWeapon->HasAmmo() || bIsReloading || bIsSprint)
 	{
 		return;
 	}
@@ -245,7 +269,7 @@ void ASGPlayer::Fire()
 	
 	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, FTimerDelegate::CreateLambda([this]() -> void
 	{
-		if (Weapon->HasAmmo())
+		if (CurrentWeapon->HasAmmo())
 		{
 			FireOnCrossHair();
 		}
@@ -253,7 +277,7 @@ void ASGPlayer::Fire()
 		{
 			UnFire();
 		}
-	}), Weapon->GetFireRate(), true);
+	}), CurrentWeapon->GetFireRate(), true);
 }
 
 void ASGPlayer::FireOnCrossHair()
@@ -273,11 +297,11 @@ void ASGPlayer::FireOnCrossHair()
 
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility))
 	{
-		Weapon->Fire(HitResult.ImpactPoint);
+		CurrentWeapon->Fire(HitResult.ImpactPoint);
 	}
 	else
 	{
-		Weapon->Fire(HitResult.TraceEnd);
+		CurrentWeapon->Fire(HitResult.TraceEnd);
 	}
 
 	Recoil();
@@ -292,7 +316,7 @@ void ASGPlayer::UnFire()
 void ASGPlayer::Recoil()
 {
 	// Pitch는 +값이 아래고 -값이 위여서 -처리해줌.
-	auto RecoliPitchValue = Weapon->GetRecoli();
+	auto RecoliPitchValue = CurrentWeapon->GetRecoli();
 	auto RecoliYawValue = FMath::RandRange(-RecoliPitchValue, RecoliPitchValue);
 
 	SpringArm->AddRelativeRotation(FRotator(RecoliPitchValue, 0.0f, 0.0f));
@@ -302,38 +326,40 @@ void ASGPlayer::Recoil()
 
 void ASGPlayer::Reload()
 {
-	if (Weapon->IsFullAmmo() || bIsReloading || bIsAimDownSight || !Weapon->HasMaxAmmo() || bIsSprint)
+	if (CurrentWeapon->IsFullAmmo() || bIsReloading || bIsAimDownSight || !CurrentWeapon->HasMaxAmmo() || bIsSprint || GetCharacterMovement()->IsFalling())
 	{
 		return;
 	}
 
 	bIsReloading = true;
 
-	Weapon->PlayReloadSound();
-	float PlayDuration = SGPlayerAnimInstance->PlayReloadAnimation();
+	CurrentWeapon->PlayReloadSound();
+	float PlayDuration = SGPlayerAnimInstance->GetReloadLength();
 
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, FTimerDelegate::CreateLambda([this]() -> void
 	{
-		Weapon->Reload();
+		CurrentWeapon->Reload();
 		bIsReloading = false;
 	}), PlayDuration, false);
 }
 
 void ASGPlayer::DoCrouch()
 {
-	if (GetMovementComponent()->IsFalling() || bIsSprint || bIsReloading)
+	if (GetMovementComponent()->IsFalling() || bIsSprint)
 	{
 		return;
 	}
 
 	if (bIsCrouching)
 	{
+		//Super::UnCrouch(true);
 		bIsCrouching = false;
 		SetCamera(CameraMode::Stand);
 		GetCharacterMovement()->MaxWalkSpeed = PlayerService::DefaultMaxWalkSpeed;
 	}
 	else
 	{
+		//Super::Crouch();
 		bIsCrouching = true;
 		SetCamera(CameraMode::Crouch);
 		GetCharacterMovement()->MaxWalkSpeed = PlayerService::CrouchMaxWalkSpeed;
@@ -364,10 +390,12 @@ void ASGPlayer::SetCamera(CameraMode NewCameraMode)
 		ArmLengthTo = 100.0f;
 		break;
 	case CameraMode::Stand:
-		ArmLocation = FVector(0.0f, 45.0f, 70.0f);
+//		ArmLocation = FVector(0.0f, 45.0f, 70.0f);
+		ArmLocation = FVector(0.0f, 65.0f, 90.0f);
 		break;
 	case CameraMode::Crouch:
-		ArmLocation = FVector(0.0f, 45.0f, 20.0f);
+		//ArmLocation = FVector(0.0f, 45.0f, 20.0f);
+		ArmLocation = FVector(0.0f, 65.0f, 40.0f);
 		break;
 	}
 }
@@ -422,4 +450,24 @@ bool ASGPlayer::IsMoving()
 	}
 
 	return false;
+}
+
+void ASGPlayer::SelectRifle()
+{
+	if(CurrentWeapon != Rifle)
+	{
+		Pistol->SetVisibility(false);
+		Rifle->SetVisibility(true);
+		CurrentWeapon = Rifle;
+	}
+}
+
+void ASGPlayer::SelectPistol()
+{
+	if (CurrentWeapon != Pistol)
+	{
+		Rifle->SetVisibility(false);
+		Pistol->SetVisibility(true);
+		CurrentWeapon = Pistol;
+	}
 }

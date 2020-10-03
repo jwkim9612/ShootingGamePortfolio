@@ -29,7 +29,12 @@ public:
 	void PlayFireSound();
 	void PlayReloadSound();
 
+	void SetVisibility(bool bNewVisibility);
+
 	FVector GetMuzzleLocation() const;
+
+private:
+	void CreateProjectilePool();
 
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
@@ -62,7 +67,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
 	UParticleSystem* MuzzleFlashParticle;
 
-	UPROPERTY(EditAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UPROPERTY()
 	TArray<class ASGProjectile*> ProjectilePool;
 
 	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))

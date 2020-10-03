@@ -28,3 +28,16 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftObjectPtr<class UParticleSystem> ParticlePath;
 };
+
+USTRUCT()
+struct SHOOTINGGAME_API FSGWeaponData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	FString Name;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSoftClassPtr<class ASGWeapon> WeaponPath;
+};

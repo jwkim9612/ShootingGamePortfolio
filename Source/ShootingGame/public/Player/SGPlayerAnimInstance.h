@@ -19,7 +19,7 @@ private:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 public:
-	float PlayReloadAnimation();
+	float GetReloadLength();
 
 private:
 	FRotator GetForwardAimRotation();
@@ -45,6 +45,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
 	bool bIsAimDownSight;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
+	bool bIsReloading;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
 	FRotator AimRotation;

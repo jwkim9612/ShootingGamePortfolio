@@ -32,11 +32,12 @@ public:
 
 public:
 	int32 GetHealth() const;
-	class ASGWeapon* GetWeapon() const;
+	class ASGWeapon* GetCurrentWeapon() const;
 
 	void TakeHit();
 	bool IsCrouching() const;
 	bool IsSprint() const;
+	bool IsReloading() const;
 	bool IsAimDownSight() const;
 
 private:
@@ -62,6 +63,9 @@ private:
 	void SpreadCorssHairSetting();
 	bool IsMoving();
 
+	void SelectRifle();
+	void SelectPistol();
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
 	UCameraComponent* Camera;
@@ -76,11 +80,20 @@ private:
 	class ASGPlayerState* SGPlayerState;
 
 	UPROPERTY()
-	class USGPlayerAnimInstance * SGPlayerAnimInstance;
+	class USGPlayerAnimInstance* SGPlayerAnimInstance;
+
+	UPROPERTY()
+	class USGGameInstance* SGGameInstance;
 
 private:
 	UPROPERTY()
-	class ASGWeapon* Weapon;
+	class ASGWeapon* CurrentWeapon;
+
+	UPROPERTY()
+	class ASGWeapon* Rifle;
+
+	UPROPERTY()
+	class ASGWeapon* Pistol;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat")
@@ -89,9 +102,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	bool bIsHealing;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
+	//UPROPERTY(BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
 	bool bIsReloading;
-
 	bool bIsCrouching;
 	bool bIsSprint;
 	bool bIsAimDownSight;

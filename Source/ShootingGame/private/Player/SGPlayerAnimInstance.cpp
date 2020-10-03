@@ -21,11 +21,12 @@ void USGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsCrouching = Player->IsCrouching();
 		bIsSprint = Player->IsSprint();
 		bIsAimDownSight = Player->IsAimDownSight();
+		bIsReloading = Player->IsReloading();
 		AimRotation = GetForwardAimRotation();
 	}
 }
 
-float USGPlayerAnimInstance::PlayReloadAnimation()
+float USGPlayerAnimInstance::GetReloadLength()
 {
 	if(ReloadAnimMontage == nullptr)
 	{
@@ -33,8 +34,9 @@ float USGPlayerAnimInstance::PlayReloadAnimation()
 		return 0.0f;
 	}
 
-	float PlayDuration = Montage_Play(ReloadAnimMontage);
-	return PlayDuration;
+	float PlayLength = ReloadAnimMontage->GetPlayLength();
+	//float PlayDuration = Montage_Play(ReloadAnimMontage);
+	return PlayLength;
 }
 
 FRotator USGPlayerAnimInstance::GetForwardAimRotation()

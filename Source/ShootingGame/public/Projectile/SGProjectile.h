@@ -17,8 +17,6 @@ protected:
 
 public:
 	void FireInDirection(const FVector & ShootDirection);
-	void SetProjectileRotation(FRotator &WeaponVector);
-	void SetRotationFollowsVelocity(bool bIsOn);
 
 	void Disable();
 	void Activate();
@@ -35,8 +33,11 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	UStaticMeshComponent* MeshComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UProjectileMovementComponent* MovementComponent;
+
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	class UParticleSystemComponent* ParticleSystemComponent;
 
 	UPROPERTY()
 	class USGGameInstance* SGGameInstance;

@@ -23,7 +23,7 @@ void ASGAmmo::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * Othe
 	auto SGPlayer = Cast<ASGPlayer>(OtherActor);
 	if (SGPlayer != nullptr)
 	{
-		SGPlayer->GetWeapon()->AddMaxAmmo(Count);
+		SGPlayer->GetCurrentWeapon()->AddMaxAmmo(Count);
 		Destroy();
 	}
 }
