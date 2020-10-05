@@ -41,3 +41,20 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<class ASGWeapon> WeaponPath;
 };
+
+enum class CameraMode : uint8
+{
+	None,
+	UnAiming,
+	Aiming,
+	Stand,
+	Crouch
+};
+
+UENUM(BlueprintType)
+enum class WeaponType : uint8 
+{
+	None,
+	Rifle,
+	Pistol
+};

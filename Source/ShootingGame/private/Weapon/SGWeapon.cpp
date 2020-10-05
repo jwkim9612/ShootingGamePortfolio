@@ -34,6 +34,13 @@ void ASGWeapon::BeginPlay()
 void ASGWeapon::Fire(FVector TargetLocation)
 {
 	SGCHECK(ProjectileClass);
+	
+	if (Type == WeaponType::None)
+	{
+		SGLOG(Warning, TEXT("The type of %s has not been decided"), *GetName());
+		return;
+	}
+
 	MuzzleLocation = MeshComponent->GetSocketLocation(TEXT("Muzzle"));
 	MuzzleRotation = MeshComponent->GetSocketRotation(TEXT("Muzzle"));
 
@@ -160,9 +167,24 @@ void ASGWeapon::SetVisibility(bool bNewVisibility)
 	MeshComponent->SetVisibility(bNewVisibility);
 }
 
+int32 ASGWeapon::GetAmmo() const
+{
+	return Ammo;
+}
+
+int32 ASGWeapon::GetMaxAmmo() const
+{
+	return MaxAmmo;
+}
+
 FVector ASGWeapon::GetMuzzleLocation() const
 {
 	return MeshComponent->GetSocketLocation(TEXT("Muzzle"));
+}
+
+WeaponType ASGWeapon::GetWeaponType() const
+{
+	return WeaponType();
 }
 
 void ASGWeapon::CreateProjectilePool()

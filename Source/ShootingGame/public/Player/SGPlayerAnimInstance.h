@@ -20,9 +20,16 @@ private:
 
 public:
 	float GetReloadLength();
+	float GetEquipLength();
+
+	void SetEquippingWeapon(class ASGWeapon* Weapon);
 
 private:
 	FRotator GetForwardAimRotation();
+
+private:
+	UFUNCTION()
+	void AnimNotify_EquipWeapon();
 
 private:
 	UPROPERTY()
@@ -50,9 +57,18 @@ private:
 	bool bIsReloading;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
+	bool bIsEquipping;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
 	FRotator AimRotation;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
 	UAnimMontage* ReloadAnimMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
+	UAnimMontage* EquipMontage;
+
+	UPROPERTY()
+	class ASGWeapon* EquippingWeapon;
 };

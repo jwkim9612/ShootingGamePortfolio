@@ -4,6 +4,8 @@
 #include "GameFramework/Character.h"
 #include "SGPlayer.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnWeaponChangedDelegate)
+
 UCLASS()
 class SHOOTINGGAME_API ASGPlayer : public ACharacter
 {
@@ -16,15 +18,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	enum class CameraMode : uint8
-	{
-		None,
-		UnAiming,
-		Aiming,
-		Stand,
-		Crouch
-	};
-
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Jump() override;
@@ -33,12 +26,15 @@ public:
 public:
 	int32 GetHealth() const;
 	class ASGWeapon* GetCurrentWeapon() const;
+	class ASGWeapon* GetRifle() const;
+	class ASGWeapon* GetPistol() const;
 
 	void TakeHit();
 	bool IsCrouching() const;
 	bool IsSprint() const;
 	bool IsReloading() const;
 	bool IsAimDownSight() const;
+	bool IsEquipping() const;
 
 private:
 	void MoveUpDown(float AxisValue);
@@ -73,6 +69,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
 	USpringArmComponent* SpringArm;
 
+private:
+
 	UPROPERTY()
 	class ASGPlayerController* SGPlayerController;
 
@@ -85,7 +83,6 @@ private:
 	UPROPERTY()
 	class USGGameInstance* SGGameInstance;
 
-private:
 	UPROPERTY()
 	class ASGWeapon* CurrentWeapon;
 
@@ -95,6 +92,8 @@ private:
 	UPROPERTY()
 	class ASGWeapon* Pistol;
 
+	UPROPERTY()
+	class USGWeaponHUD* SGWeaponHUD;
 private:
 	UPROPERTY(EditAnywhere, Category = "Stat")
 	int32 Health;
@@ -102,11 +101,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Stat")
 	bool bIsHealing;
 
-	//UPROPERTY(BlueprintReadOnly, Category = "Stat", meta = (AllowPrivateAccess = true))
 	bool bIsReloading;
 	bool bIsCrouching;
 	bool bIsSprint;
+	bool bIsEquipping;
 	bool bIsAimDownSight;
+	bool bIsFiring;
 
 	bool bIsPressedAimDownSight;
 	bool bIsPressedSprint;
@@ -124,4 +124,7 @@ private:
 	FTimerHandle HealingTimerHandle;
 	FTimerHandle FireTimerHandle;
 	FTimerHandle ReloadTimerHandle;
+	FTimerHandle EquipTimerHandle;
+
+	FOnWeaponChangedDelegate OnWeaponChanged;
 };

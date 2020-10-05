@@ -11,6 +11,7 @@
 #include "SGCrossHair.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "SGGameInstance.h"
+#include "SGWeaponHUD.h"
 
 ASGPlayer::ASGPlayer()
 {
@@ -32,6 +33,8 @@ ASGPlayer::ASGPlayer()
 	bIsSprint = false;
 	bIsReloading = false;
 	bIsAimDownSight = false;
+	bIsEquipping = false;
+	bIsFiring = false;
 	bIsPressedAimDownSight = false;
 }
 
@@ -43,11 +46,15 @@ void ASGPlayer::BeginPlay()
 	SGPlayerState = Cast<ASGPlayerState>(SGPlayerController->PlayerState);
 	SGPlayerAnimInstance = Cast<USGPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	SGGameInstance = Cast<USGGameInstance>(GetWorld()->GetGameInstance());
+	//SGWeaponHUD = Cast<USGWeaponHUD>(SGPlayerController->GetSGHUDWidget()->GetWeaponHUD());
 
 	SGCHECK(SGPlayerController);
 	SGCHECK(SGPlayerState);
 	SGCHECK(SGPlayerAnimInstance);
 	SGCHECK(SGGameInstance);
+	//SGCHECK(SGWeaponHUD);
+	SGLOG(Warning, TEXT("Begin Character"));
+
 
 	SGPlayerState->InitPlayerData(this);
 
@@ -59,7 +66,7 @@ void ASGPlayer::BeginPlay()
 	//auto MyClass = Cast<UClass>(FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).ResolveClass());
 	//auto MyClass = FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).TryLoadClass<UClass>();
 
-	auto MyClass = SGGameInstance->TryGetWeaponClass(TEXT("DarknessRifle"));
+	auto MyClass = SGGameInstance->TryGetWeaponClass(TEXT("PrototypeRifle"));
 	if (MyClass != nullptr)
 	{
 		Rifle = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass, &FVector::ZeroVector, &FRotator::ZeroRotator));
@@ -67,7 +74,7 @@ void ASGPlayer::BeginPlay()
 		Rifle->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
 	}
 
-	auto MyClass2 = SGGameInstance->TryGetWeaponClass(TEXT("WhiteRifle"));
+	auto MyClass2 = SGGameInstance->TryGetWeaponClass(TEXT("PrototypePistol"));
 	if (MyClass2 != nullptr)
 	{
 		Pistol = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass2, &FVector::ZeroVector, &FRotator::ZeroRotator));
@@ -75,6 +82,8 @@ void ASGPlayer::BeginPlay()
 		Pistol->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
 	}
 
+	//Pistol->SetVisibility(false);
+	//CurrentWeapon = Rifle;
 	SelectRifle();
 	//////////////
 }
@@ -86,7 +95,7 @@ void ASGPlayer::Tick(float DeltaSeconds)
 	/////////// 점프중에 조준키 눌렀을 때, 장전  조준키 눌렀을 때 처리 /////////////
 	if (bIsPressedAimDownSight)
 	{
-		if (!bIsAimDownSight && !bIsSprint && !GetCharacterMovement()->IsFalling() && !bIsReloading)
+		if (!bIsAimDownSight && !bIsSprint && !GetCharacterMovement()->IsFalling() && !bIsReloading && !bIsEquipping)
 		{
 			bIsAimDownSight = true;
 			SGPlayerController->SetDefaultSpreadCrossHair(PlayerService::DefaultAimSpreadValue);
@@ -182,6 +191,16 @@ ASGWeapon * ASGPlayer::GetCurrentWeapon() const
 	return CurrentWeapon;
 }
 
+ASGWeapon * ASGPlayer::GetRifle() const
+{
+	return Rifle;
+}
+
+ASGWeapon * ASGPlayer::GetPistol() const
+{
+	return Pistol;
+}
+
 void ASGPlayer::TakeHit()
 {
 	FDamageEvent DamageEvent;
@@ -206,6 +225,11 @@ bool ASGPlayer::IsReloading() const
 bool ASGPlayer::IsAimDownSight() const
 {
 	return bIsAimDownSight;
+}
+
+bool ASGPlayer::IsEquipping() const
+{
+	return bIsEquipping;
 }
 
 void ASGPlayer::MoveUpDown(float AxisValue)
@@ -260,13 +284,18 @@ void ASGPlayer::SetHealingTimer()
 void ASGPlayer::Fire()
 {
 	SGCHECK(CurrentWeapon);
-	if (!CurrentWeapon->HasAmmo() || bIsReloading || bIsSprint)
+	if (!CurrentWeapon->HasAmmo() || bIsReloading || bIsSprint || bIsEquipping)
 	{
 		return;
 	}
 
 	FireOnCrossHair();
+	if (CurrentWeapon->GetWeaponType() == WeaponType::Pistol)
+	{
+		return;
+	}
 	
+	bIsFiring = true;
 	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, FTimerDelegate::CreateLambda([this]() -> void
 	{
 		if (CurrentWeapon->HasAmmo())
@@ -310,6 +339,7 @@ void ASGPlayer::FireOnCrossHair()
 
 void ASGPlayer::UnFire()
 {
+	bIsFiring = false;
 	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 }
 
@@ -326,7 +356,7 @@ void ASGPlayer::Recoil()
 
 void ASGPlayer::Reload()
 {
-	if (CurrentWeapon->IsFullAmmo() || bIsReloading || bIsAimDownSight || !CurrentWeapon->HasMaxAmmo() || bIsSprint || GetCharacterMovement()->IsFalling())
+	if (CurrentWeapon->IsFullAmmo() || bIsReloading || bIsAimDownSight || !CurrentWeapon->HasMaxAmmo() || bIsSprint || GetCharacterMovement()->IsFalling() || bIsEquipping)
 	{
 		return;
 	}
@@ -390,11 +420,9 @@ void ASGPlayer::SetCamera(CameraMode NewCameraMode)
 		ArmLengthTo = 100.0f;
 		break;
 	case CameraMode::Stand:
-//		ArmLocation = FVector(0.0f, 45.0f, 70.0f);
 		ArmLocation = FVector(0.0f, 65.0f, 90.0f);
 		break;
 	case CameraMode::Crouch:
-		//ArmLocation = FVector(0.0f, 45.0f, 20.0f);
 		ArmLocation = FVector(0.0f, 65.0f, 40.0f);
 		break;
 	}
@@ -454,20 +482,67 @@ bool ASGPlayer::IsMoving()
 
 void ASGPlayer::SelectRifle()
 {
-	if(CurrentWeapon != Rifle)
+	if (CurrentWeapon == Rifle || bIsEquipping || bIsSprint || GetCharacterMovement()->IsFalling())// || )bIsAimDownSight)
 	{
-		Pistol->SetVisibility(false);
-		Rifle->SetVisibility(true);
-		CurrentWeapon = Rifle;
+		return;
 	}
+
+	if (bIsReloading)
+	{
+		bIsReloading = false;
+		GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
+	}
+
+	if (bIsFiring)
+	{
+		UnFire();
+	}
+
+	bIsAimDownSight = false;
+	bIsEquipping = true;
+	
+	auto EquipTimer = SGPlayerAnimInstance->GetEquipLength();
+	SGPlayerAnimInstance->SetEquippingWeapon(Rifle);
+	Pistol->SetVisibility(false);
+
+	GetWorld()->GetTimerManager().SetTimer(EquipTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
+		bIsEquipping = false;
+	}), EquipTimer, false);
+
+	CurrentWeapon = Rifle;
+	//SGPlayerController->GetSGHUDWidget()->GetWeaponHUD()->SetCurrentWeapon(CurrentWeapon);
+	OnWeaponChanged.Broadcast();
 }
 
 void ASGPlayer::SelectPistol()
 {
-	if (CurrentWeapon != Pistol)
+	if (CurrentWeapon == Pistol || bIsEquipping || bIsSprint || GetCharacterMovement()->IsFalling())// || bIsAimDownSight)
 	{
-		Rifle->SetVisibility(false);
-		Pistol->SetVisibility(true);
-		CurrentWeapon = Pistol;
+		return;
 	}
+
+	if (bIsReloading)
+	{
+		bIsReloading = false;
+		GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
+	}
+	
+	if (bIsFiring)
+	{
+		UnFire();
+	}
+
+	bIsAimDownSight = false;
+	bIsEquipping = true;
+	auto EquipTimer = SGPlayerAnimInstance->GetEquipLength();
+	SGPlayerAnimInstance->SetEquippingWeapon(Pistol);
+	Rifle->SetVisibility(false);
+
+	GetWorld()->GetTimerManager().SetTimer(EquipTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
+		bIsEquipping = false;
+	}), EquipTimer, false);
+
+	CurrentWeapon = Pistol;
+	//SGPlayerController->GetSGHUDWidget()->GetWeaponHUD()->SetCurrentWeapon(CurrentWeapon);
+	OnWeaponChanged.Broadcast();
 }

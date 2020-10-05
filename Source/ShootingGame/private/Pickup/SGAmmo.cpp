@@ -7,6 +7,7 @@ ASGAmmo::ASGAmmo()
 	PrimaryActorTick.bCanEverTick = false;
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	RootComponent = StaticMesh;
 
 	StaticMesh->SetCollisionProfileName(TEXT("OverlapAll"));
 	StaticMesh->OnComponentBeginOverlap.AddDynamic(this, &ASGAmmo::OnOverlapBegin);
@@ -23,7 +24,16 @@ void ASGAmmo::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * Othe
 	auto SGPlayer = Cast<ASGPlayer>(OtherActor);
 	if (SGPlayer != nullptr)
 	{
-		SGPlayer->GetCurrentWeapon()->AddMaxAmmo(Count);
+		switch (Type)
+		{
+		case WeaponType::Pistol:
+			SGPlayer->GetPistol()->AddMaxAmmo(Count);
+			break;
+		case WeaponType::Rifle:
+			SGPlayer->GetRifle()->AddMaxAmmo(Count);
+			break;
+		}
+
 		Destroy();
 	}
 }

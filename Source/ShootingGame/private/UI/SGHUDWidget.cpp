@@ -1,6 +1,7 @@
 #include "SGHUDWidget.h"
 #include "SGHPBar.h"
 #include "SGCrossHair.h"
+#include "SGWeaponHUD.h"
 
 bool USGHUDWidget::Initialize()
 {
@@ -39,4 +40,9 @@ USGHPBar* USGHUDWidget::GetSGHPBar() const
 USGCrossHair * USGHUDWidget::GetSGCrossHair() const
 {
 	return SGCrossHair;
+}
+
+USGWeaponHUD * USGHUDWidget::GetWeaponHUD() const
+{
+	return SGWeaponHUD;
 }

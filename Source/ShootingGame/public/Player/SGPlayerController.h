@@ -15,6 +15,7 @@ class SHOOTINGGAME_API ASGPlayerController : public APlayerController
 public:
 	ASGPlayerController();
 
+public:
 	virtual void BeginPlay() override;
 
 public:

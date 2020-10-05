@@ -31,7 +31,10 @@ public:
 
 	void SetVisibility(bool bNewVisibility);
 
+	int32 GetAmmo() const;
+	int32 GetMaxAmmo() const;
 	FVector GetMuzzleLocation() const;
+	WeaponType GetWeaponType() const;
 
 private:
 	void CreateProjectilePool();
@@ -45,6 +48,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	UAudioComponent* ReloadAudioComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
+	WeaponType Type;
 
 	UPROPERTY(EditDefaultsOnly, category = "bullet", meta = (AllowPrivateAccess = true))
 	TSubclassOf<class ASGProjectile> ProjectileClass;

@@ -1,5 +1,6 @@
 #include "SGPlayerAnimInstance.h"
 #include "SGPlayer.h"
+#include "SGWeapon.h"
 
 void USGPlayerAnimInstance::NativeBeginPlay()
 {
@@ -22,6 +23,7 @@ void USGPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsSprint = Player->IsSprint();
 		bIsAimDownSight = Player->IsAimDownSight();
 		bIsReloading = Player->IsReloading();
+		bIsEquipping = Player->IsEquipping();
 		AimRotation = GetForwardAimRotation();
 	}
 }
@@ -35,8 +37,25 @@ float USGPlayerAnimInstance::GetReloadLength()
 	}
 
 	float PlayLength = ReloadAnimMontage->GetPlayLength();
-	//float PlayDuration = Montage_Play(ReloadAnimMontage);
 	return PlayLength;
+}
+
+float USGPlayerAnimInstance::GetEquipLength()
+{
+	if (EquipMontage == nullptr)
+	{
+		SGLOG(Error, TEXT("EquipAnimMontage is null!!"));
+		return 0.0f;
+	}
+
+	float PlayLength = EquipMontage->GetPlayLength();
+	return PlayLength;
+}
+
+void USGPlayerAnimInstance::SetEquippingWeapon(ASGWeapon * Weapon)
+{
+	SGCHECK(Weapon);
+	EquippingWeapon = Weapon;
 }
 
 FRotator USGPlayerAnimInstance::GetForwardAimRotation()
@@ -55,4 +74,10 @@ FRotator USGPlayerAnimInstance::GetForwardAimRotation()
 	ControlPitch /= 3;
 
 	return FRotator(0.0f, 0.0f, ControlPitch);
+}
+
+void USGPlayerAnimInstance::AnimNotify_EquipWeapon()
+{
+	SGCHECK(EquippingWeapon);
+	EquippingWeapon->SetVisibility(true);
 }

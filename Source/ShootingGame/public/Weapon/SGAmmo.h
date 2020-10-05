@@ -2,6 +2,7 @@
 
 #include "ShootingGame.h"
 #include "GameFramework/Actor.h"
+#include "SGType.h"
 #include "SGAmmo.generated.h"
 
 UCLASS()
@@ -25,4 +26,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, category = "Ammo", meta = (AllowPrivateAccess = true))
 	int32 Count;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
+	WeaponType Type;
 };

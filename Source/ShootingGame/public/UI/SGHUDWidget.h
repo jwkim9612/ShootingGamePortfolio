@@ -21,6 +21,7 @@ public:
 
 	class USGHPBar* GetSGHPBar() const;
 	class USGCrossHair* GetSGCrossHair() const;
+	class USGWeaponHUD* GetWeaponHUD() const;
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -28,6 +29,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class USGCrossHair* SGCrossHair;
+
+	UPROPERTY(meta = (BindWidget))
+	class USGWeaponHUD* SGWeaponHUD;
 
 	UPROPERTY(meta = (BindWidgetAnim))
 	class UWidgetAnimation* FadeInHPBar;

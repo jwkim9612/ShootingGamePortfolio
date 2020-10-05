@@ -42,6 +42,8 @@ void ASGPlayerController::BeginPlay()
 	SGHitEffectWidget->AddToViewport(1);
 
 	BindWidgetToPlayerState();
+
+	SGLOG(Warning, TEXT("Begin Controller"));
 }
 
 USGHitEffectWidget * ASGPlayerController::GetSGHitEffectWidget() const
