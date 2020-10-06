@@ -7,21 +7,24 @@ ASGWeapon::ASGWeapon()
 	MeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComponent"));
 	FireAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("FireAudioComponent"));
 	ReloadAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("ReloadAudioComponent"));
+	AmmoPickupAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AmmoPickupAudioComponent"));
 
 	SetRootComponent(MeshComponent);
 	FireAudioComponent->SetupAttachment(RootComponent);
 	ReloadAudioComponent->SetupAttachment(RootComponent);
+	AmmoPickupAudioComponent->SetupAttachment(RootComponent);
 
 	FireAudioComponent->SetAutoActivate(false);
 	ReloadAudioComponent->SetAutoActivate(false);
+	AmmoPickupAudioComponent->SetAutoActivate(false);
 
 	FireAudioComponent->SetVolumeMultiplier(0.3f);
 	ReloadAudioComponent->SetVolumeMultiplier(0.3f);
+	AmmoPickupAudioComponent->SetVolumeMultiplier(0.3f);
 
 	ProjectilePool.Reserve(10);
 
 	CurrentProjectileIndex = 0;
-
 }
 
 void ASGWeapon::BeginPlay()
@@ -82,6 +85,8 @@ void ASGWeapon::Reload()
 		MaxAmmo -= ReloadValues;
 		Ammo += ReloadValues;
 	}
+
+	OnAmmoChanged.Broadcast();
 }
 
 void ASGWeapon::UseAmmo()
@@ -89,12 +94,15 @@ void ASGWeapon::UseAmmo()
 	if (Ammo > 0)
 	{
 		--Ammo;
+		OnAmmoChanged.Broadcast();
 	}
 }
 
 void ASGWeapon::AddMaxAmmo(int32 IncreaseValue)
 {
 	MaxAmmo += IncreaseValue;
+	PlayAmmoPickupSound();
+	OnAmmoChanged.Broadcast();
 }
 
 bool ASGWeapon::HasAmmo() const
@@ -162,6 +170,12 @@ void ASGWeapon::PlayReloadSound()
 	ReloadAudioComponent->Play();
 }
 
+void ASGWeapon::PlayAmmoPickupSound()
+{
+	SGCHECK(AmmoPickupAudioComponent);
+	AmmoPickupAudioComponent->Play();
+}
+
 void ASGWeapon::SetVisibility(bool bNewVisibility)
 {
 	MeshComponent->SetVisibility(bNewVisibility);
@@ -184,7 +198,7 @@ FVector ASGWeapon::GetMuzzleLocation() const
 
 WeaponType ASGWeapon::GetWeaponType() const
 {
-	return WeaponType();
+	return Type;
 }
 
 void ASGWeapon::CreateProjectilePool()

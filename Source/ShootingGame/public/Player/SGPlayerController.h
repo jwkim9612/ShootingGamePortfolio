@@ -16,6 +16,7 @@ public:
 	ASGPlayerController();
 
 public:
+	virtual void OnPossess(APawn* aPawn) override;
 	virtual void BeginPlay() override;
 
 public:

@@ -4,6 +4,8 @@
 #include "GameFramework/Actor.h"
 #include "SGWeapon.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAmmoChangedDelegate);
+
 UCLASS()
 class SHOOTINGGAME_API ASGWeapon : public AActor
 {
@@ -28,6 +30,7 @@ public:
 	bool IsFullAmmo() const;
 	void PlayFireSound();
 	void PlayReloadSound();
+	void PlayAmmoPickupSound();
 
 	void SetVisibility(bool bNewVisibility);
 
@@ -49,12 +52,16 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	UAudioComponent* ReloadAudioComponent;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
-	WeaponType Type;
+	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
+	UAudioComponent* AmmoPickupAudioComponent;
 
 	UPROPERTY(EditDefaultsOnly, category = "bullet", meta = (AllowPrivateAccess = true))
 	TSubclassOf<class ASGProjectile> ProjectileClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UParticleSystem* MuzzleFlashParticle;
+
+private:
 	UPROPERTY(EditAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
 	int32 MaxAmmo;
 
@@ -70,16 +77,20 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
 	float Recoli;
 
-	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
-	UParticleSystem* MuzzleFlashParticle;
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
+	WeaponType Type;
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
+	int CurrentProjectileIndex;
 
 	UPROPERTY()
 	TArray<class ASGProjectile*> ProjectilePool;
 
-	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
-	int CurrentProjectileIndex;
-
 private:
 	FVector MuzzleLocation;
 	FRotator MuzzleRotation;
+
+public:
+	FOnAmmoChangedDelegate OnAmmoChanged;
 };

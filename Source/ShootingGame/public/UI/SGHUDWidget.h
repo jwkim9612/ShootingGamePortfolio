@@ -19,6 +19,8 @@ public:
 	void PlayFadeInHPBarAnimation();
 	void PlayFadeOutHPBarAnimation();
 
+	void SetControllingPawn(APawn* aPawn);
+
 	class USGHPBar* GetSGHPBar() const;
 	class USGCrossHair* GetSGCrossHair() const;
 	class USGWeaponHUD* GetWeaponHUD() const;
@@ -38,6 +40,10 @@ private:
 
 	UPROPERTY(meta = (BindWidgetAnim))
 	class UWidgetAnimation* FadeOutHPBar;
+
+private:
+	UPROPERTY()
+	class ASGPlayer* SGPlayer;
 
 private:
 	bool bIsOnShowHPBar;

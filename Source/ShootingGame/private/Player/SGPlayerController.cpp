@@ -29,19 +29,41 @@ ASGPlayerController::ASGPlayerController()
 
 }
 
-void ASGPlayerController::BeginPlay()
+void ASGPlayerController::OnPossess(APawn * aPawn)
 {
+	Super::OnPossess(aPawn);
+
 	SGPlayerState = Cast<ASGPlayerState>(PlayerState);
+	SGCHECK(SGPlayerState);
 
 	SGCHECK(SGHUDWidgetClass);
 	SGHUDWidget = CreateWidget<USGHUDWidget>(this, SGHUDWidgetClass);
 	SGHUDWidget->AddToViewport(0);
+	SGHUDWidget->SetControllingPawn(aPawn);
 
 	SGCHECK(SGHitEffectWidgetClass);
 	SGHitEffectWidget = CreateWidget<USGHitEffectWidget>(this, SGHitEffectWidgetClass);
 	SGHitEffectWidget->AddToViewport(1);
 
 	BindWidgetToPlayerState();
+
+	SGLOG(Warning, TEXT("Possess Controller"));
+}
+
+void ASGPlayerController::BeginPlay()
+{
+	//SGPlayerState = Cast<ASGPlayerState>(PlayerState);
+	//SGCHECK(SGPlayerState);
+
+	//SGCHECK(SGHUDWidgetClass);
+	//SGHUDWidget = CreateWidget<USGHUDWidget>(this, SGHUDWidgetClass);
+	//SGHUDWidget->AddToViewport(0);
+
+	//SGCHECK(SGHitEffectWidgetClass);
+	//SGHitEffectWidget = CreateWidget<USGHitEffectWidget>(this, SGHitEffectWidgetClass);
+	//SGHitEffectWidget->AddToViewport(1);
+
+	//BindWidgetToPlayerState();
 
 	SGLOG(Warning, TEXT("Begin Controller"));
 }

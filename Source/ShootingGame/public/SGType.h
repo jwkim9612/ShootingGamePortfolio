@@ -42,6 +42,19 @@ public:
 	TSoftClassPtr<class ASGWeapon> WeaponPath;
 };
 
+USTRUCT()
+struct SHOOTINGGAME_API FSGImageData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	FString Name;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSoftObjectPtr<class UTexture2D> ImagePath;
+};
+
 enum class CameraMode : uint8
 {
 	None,

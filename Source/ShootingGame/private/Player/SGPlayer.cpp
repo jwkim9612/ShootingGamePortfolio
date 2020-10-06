@@ -43,18 +43,21 @@ void ASGPlayer::BeginPlay()
 	Super::BeginPlay();
 	
 	SGPlayerController = Cast<ASGPlayerController>(GetController());
-	SGPlayerState = Cast<ASGPlayerState>(SGPlayerController->PlayerState);
-	SGPlayerAnimInstance = Cast<USGPlayerAnimInstance>(GetMesh()->GetAnimInstance());
-	SGGameInstance = Cast<USGGameInstance>(GetWorld()->GetGameInstance());
-	//SGWeaponHUD = Cast<USGWeaponHUD>(SGPlayerController->GetSGHUDWidget()->GetWeaponHUD());
-
 	SGCHECK(SGPlayerController);
-	SGCHECK(SGPlayerState);
-	SGCHECK(SGPlayerAnimInstance);
-	SGCHECK(SGGameInstance);
-	//SGCHECK(SGWeaponHUD);
-	SGLOG(Warning, TEXT("Begin Character"));
 
+	SGPlayerState = Cast<ASGPlayerState>(SGPlayerController->PlayerState);
+	SGCHECK(SGPlayerState);
+
+	SGPlayerAnimInstance = Cast<USGPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	SGCHECK(SGPlayerAnimInstance);
+
+	SGGameInstance = Cast<USGGameInstance>(GetWorld()->GetGameInstance());
+	SGCHECK(SGGameInstance);
+
+	SGWeaponHUD = Cast<USGWeaponHUD>(SGPlayerController->GetSGHUDWidget()->GetWeaponHUD());
+	SGCHECK(SGWeaponHUD);
+
+	SGLOG(Warning, TEXT("Begin Character"));
 
 	SGPlayerState->InitPlayerData(this);
 
@@ -66,7 +69,7 @@ void ASGPlayer::BeginPlay()
 	//auto MyClass = Cast<UClass>(FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).ResolveClass());
 	//auto MyClass = FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).TryLoadClass<UClass>();
 
-	auto MyClass = SGGameInstance->TryGetWeaponClass(TEXT("PrototypeRifle"));
+	auto MyClass = SGGameInstance->TryGetWeaponClass(TEXT("WhiteRifle"));
 	if (MyClass != nullptr)
 	{
 		Rifle = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass, &FVector::ZeroVector, &FRotator::ZeroRotator));
@@ -74,13 +77,16 @@ void ASGPlayer::BeginPlay()
 		Rifle->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
 	}
 
-	auto MyClass2 = SGGameInstance->TryGetWeaponClass(TEXT("PrototypePistol"));
+	auto MyClass2 = SGGameInstance->TryGetWeaponClass(TEXT("WhitePistol"));
 	if (MyClass2 != nullptr)
 	{
 		Pistol = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass2, &FVector::ZeroVector, &FRotator::ZeroRotator));
 		SGCHECK(Pistol);
 		Pistol->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
 	}
+
+	SGWeaponHUD->BindWeapon(Rifle);
+	SGWeaponHUD->BindWeapon(Pistol);
 
 	//Pistol->SetVisibility(false);
 	//CurrentWeapon = Rifle;
@@ -510,7 +516,7 @@ void ASGPlayer::SelectRifle()
 	}), EquipTimer, false);
 
 	CurrentWeapon = Rifle;
-	//SGPlayerController->GetSGHUDWidget()->GetWeaponHUD()->SetCurrentWeapon(CurrentWeapon);
+	SGWeaponHUD->SetCurrentWeapon(CurrentWeapon);
 	OnWeaponChanged.Broadcast();
 }
 
@@ -543,6 +549,6 @@ void ASGPlayer::SelectPistol()
 	}), EquipTimer, false);
 
 	CurrentWeapon = Pistol;
-	//SGPlayerController->GetSGHUDWidget()->GetWeaponHUD()->SetCurrentWeapon(CurrentWeapon);
+	SGWeaponHUD->SetCurrentWeapon(CurrentWeapon);
 	OnWeaponChanged.Broadcast();
 }

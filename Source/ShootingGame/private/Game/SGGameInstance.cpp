@@ -7,6 +7,7 @@ void USGGameInstance::Init()
 
 	InitializeParticleDataTable();
 	InitializeWeaponDataTable();
+	InitializeImageDataTable();
 }
 
 void USGGameInstance::InitializeParticleDataTable()
@@ -47,6 +48,22 @@ void USGGameInstance::InitializeWeaponDataTable()
 	}
 }
 
+void USGGameInstance::InitializeImageDataTable()
+{
+	SGCHECK(ImageDataTable);
+
+	TArray<FName> Names = ImageDataTable->GetRowNames();
+	ImageTable.Reserve(Names.Num());
+	for (const auto& Name : Names)
+	{
+		auto Data = ImageDataTable->FindRow<FSGImageData>(Name, TEXT(""));
+		if (!Data->ImagePath.IsNull())
+		{
+			ImageTable.Add(Data->Name, AssetLoader.LoadSynchronous(Data->ImagePath));
+		}
+	}
+}
+
 UParticleSystem * USGGameInstance::TryGetParticleSystem(FString Name)
 {
 	if (auto ParticleSystem = ParticleTable.Find(Name))
@@ -63,6 +80,17 @@ UClass* USGGameInstance::TryGetWeaponClass(FString Name)
 	if (auto Weapon = WeaponTable.Find(Name))
 	{
 		return *Weapon;
+	}
+
+	SGLOG(Warning, TEXT("%s is no Data"), *Name);
+	return nullptr;
+}
+
+UTexture2D* USGGameInstance::TryGetImage(FString Name)
+{
+	if (auto Image = ImageTable.Find(Name))
+	{
+		return *Image;
 	}
 
 	SGLOG(Warning, TEXT("%s is no Data"), *Name);

@@ -4,7 +4,7 @@
 #include "GameFramework/Character.h"
 #include "SGPlayer.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnWeaponChangedDelegate)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponChangedDelegate);
 
 UCLASS()
 class SHOOTINGGAME_API ASGPlayer : public ACharacter
@@ -61,6 +61,9 @@ private:
 
 	void SelectRifle();
 	void SelectPistol();
+
+public:
+	FOnWeaponChangedDelegate OnWeaponChanged;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera", meta = (AllowPrivateAccess = true))
@@ -125,6 +128,4 @@ private:
 	FTimerHandle FireTimerHandle;
 	FTimerHandle ReloadTimerHandle;
 	FTimerHandle EquipTimerHandle;
-
-	FOnWeaponChangedDelegate OnWeaponChanged;
 };

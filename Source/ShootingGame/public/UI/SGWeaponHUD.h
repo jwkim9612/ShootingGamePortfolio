@@ -13,8 +13,15 @@ class SHOOTINGGAME_API USGWeaponHUD : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void Update();
+	UFUNCTION()
+	void UpdateAmmo();
+
+	UFUNCTION()
+	void UpdateWeapon();
+
 	void SetCurrentWeapon(class ASGWeapon* NewWeapon);
+	void BindPlayer(class ASGPlayer* NewPlayer);
+	void BindWeapon(class ASGWeapon* NewWeapon);
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -27,7 +34,7 @@ private:
 	class UTextBlock* Name;
 
 	UPROPERTY(meta = (BindWidget))
-	class UImage* WeaponImage;
+	class UImage* Image;
 
 private:
 	UPROPERTY()

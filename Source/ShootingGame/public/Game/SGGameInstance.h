@@ -19,10 +19,12 @@ public:
 private:
 	void InitializeParticleDataTable();
 	void InitializeWeaponDataTable();
+	void InitializeImageDataTable();
 
 public:
 	class UParticleSystem* TryGetParticleSystem(FString Name);
 	UClass* TryGetWeaponClass(FString Name);
+	class UTexture2D* TryGetImage(FString Name);
 
 public:
 	FStreamableManager AssetLoader;
@@ -34,10 +36,16 @@ private:
 	UPROPERTY(EditAnywhere, Category = "WeaponDataTable")
 	class UDataTable* WeaponDataTable;
 
+	UPROPERTY(EditAnywhere, Category = "ImageDataTable")
+	class UDataTable* ImageDataTable;
+
 private:
 	UPROPERTY()
 	TMap<FString, class UParticleSystem*> ParticleTable;
 
 	UPROPERTY()
 	TMap<FString, UClass*> WeaponTable;
+
+	UPROPERTY()
+	TMap<FString, class UTexture2D*> ImageTable;
 };
