@@ -1,6 +1,7 @@
 #include "SGPlayerController.h"
 #include "SGHUDWidget.h"
 #include "SGHitEffectWidget.h"
+#include "SGFloatingDamageText.h"
 #include "SGPlayerState.h"
 #include "SGHPBar.h"
 #include "SGCrossHair.h"
@@ -52,19 +53,7 @@ void ASGPlayerController::OnPossess(APawn * aPawn)
 
 void ASGPlayerController::BeginPlay()
 {
-	//SGPlayerState = Cast<ASGPlayerState>(PlayerState);
-	//SGCHECK(SGPlayerState);
-
-	//SGCHECK(SGHUDWidgetClass);
-	//SGHUDWidget = CreateWidget<USGHUDWidget>(this, SGHUDWidgetClass);
-	//SGHUDWidget->AddToViewport(0);
-
-	//SGCHECK(SGHitEffectWidgetClass);
-	//SGHitEffectWidget = CreateWidget<USGHitEffectWidget>(this, SGHitEffectWidgetClass);
-	//SGHitEffectWidget->AddToViewport(1);
-
-	//BindWidgetToPlayerState();
-
+	
 	SGLOG(Warning, TEXT("Begin Controller"));
 }
 

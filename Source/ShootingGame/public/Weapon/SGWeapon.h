@@ -33,13 +33,14 @@ public:
 	void PlayAmmoPickupSound();
 
 	void SetVisibility(bool bNewVisibility);
+	void SetController(AController* NewController);
+	void SetControllingPawn(APawn* NewPawn);
 
 	int32 GetAmmo() const;
 	int32 GetMaxAmmo() const;
 	FVector GetMuzzleLocation() const;
 	WeaponType GetWeaponType() const;
 
-private:
 	void CreateProjectilePool();
 
 private:
@@ -86,6 +87,12 @@ private:
 
 	UPROPERTY()
 	TArray<class ASGProjectile*> ProjectilePool;
+
+	UPROPERTY()
+	class AController* Controller;
+
+	UPROPERTY()
+	class APawn* ControllingPawn;
 
 private:
 	FVector MuzzleLocation;

@@ -54,6 +54,18 @@ void ASGProjectile::Activate()
 	SetDisableTimer(ProjectileService::DisableTimer);
 }
 
+void ASGProjectile::SetController(AController * NewController)
+{
+	SGCHECK(NewController);
+	Controller = NewController;
+}
+
+void ASGProjectile::SetControllingPawn(APawn * NewPawn)
+{
+	SGCHECK(NewPawn);
+	ControllingPawn = NewPawn;
+}
+
 void ASGProjectile::SetDisableTimer(float DisableTimer)
 {
 	GetWorld()->GetTimerManager().SetTimer(DisableTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
@@ -72,7 +84,14 @@ void ASGProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	ACharacter* TargetActor = Cast<ACharacter>(OtherActor);
 	if (TargetActor != nullptr)
 	{
-		SGLOG(Warning, TEXT("Hit Character %s!!"), *Hit.BoneName.ToString());
+		FDamageEvent DamageEvent;
+		TargetActor->TakeDamage(Damage, DamageEvent, Controller, ControllingPawn);
+
+		if (Hit.BoneName.ToString().Equals(TEXT("head")))
+		{
+			SGLOG(Warning, TEXT("Head Shot!"));
+		}
+
 		auto ParticleSystem = SGGameInstance->TryGetParticleSystem(FString("HitCharacter"));
 		if (ParticleSystem != nullptr)
 		{

@@ -21,6 +21,9 @@ public:
 	void Disable();
 	void Activate();
 
+	void SetController(AController* NewController);
+	void SetControllingPawn(APawn* NewPawn);
+
 private:
 	void SetDisableTimer(float DisableTimer);
 	void ClearDisableTimer();
@@ -39,8 +42,19 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UParticleSystemComponent* ParticleSystemComponent;
 
+private:
 	UPROPERTY()
 	class USGGameInstance* SGGameInstance;
+
+	UPROPERTY()
+	class AController* Controller;
+
+	UPROPERTY()
+	class APawn* ControllingPawn;
+
+private:
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	int32 Damage;
 
 	FTimerHandle DisableTimerHandle;
 };

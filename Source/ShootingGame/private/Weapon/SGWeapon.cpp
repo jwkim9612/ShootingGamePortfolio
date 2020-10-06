@@ -31,7 +31,7 @@ void ASGWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateProjectilePool();
+	//CreateProjectilePool();
 }
 
 void ASGWeapon::Fire(FVector TargetLocation)
@@ -181,6 +181,18 @@ void ASGWeapon::SetVisibility(bool bNewVisibility)
 	MeshComponent->SetVisibility(bNewVisibility);
 }
 
+void ASGWeapon::SetController(AController * NewController)
+{
+	SGCHECK(NewController);
+	Controller = NewController;
+}
+
+void ASGWeapon::SetControllingPawn(APawn * NewPawn)
+{
+	SGCHECK(NewPawn);
+	ControllingPawn = NewPawn;
+}
+
 int32 ASGWeapon::GetAmmo() const
 {
 	return Ammo;
@@ -211,6 +223,8 @@ void ASGWeapon::CreateProjectilePool()
 		auto Projectile = Cast<ASGProjectile>(GetWorld()->SpawnActor(ProjectileClass, &FVector::ZeroVector, &MuzzleRotation));
 		if (Projectile != nullptr)
 		{
+			Projectile->SetController(Controller);
+			Projectile->SetControllingPawn(ControllingPawn);
 			Projectile->Disable();
 			ProjectilePool.Emplace(Projectile);
 		}

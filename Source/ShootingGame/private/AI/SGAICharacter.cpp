@@ -38,6 +38,15 @@ void ASGAICharacter::Tick(float DeltaTime)
 
 }
 
+float ASGAICharacter::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	SGLOG(Warning, TEXT("TakeDamage!!!"));
+
+	return FinalDamage;
+}
+
 void ASGAICharacter::OnSeePlayer(APawn * Pawn)
 {
 	ASGPlayer* Player = Cast<ASGPlayer>(Pawn);
