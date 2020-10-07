@@ -19,6 +19,10 @@ public:
 	void SetTextAndPlay(int32 Damage, FVector Location, bool bIsHitHead = false);
 
 private:
+	void CreateFloatingDamageTextComponentPool();
+	void CreateFloatingDamageTextWidgetPool();
+
+private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
 	TArray<class UWidgetComponent*> FloatingDamageTextComponentPool;
 

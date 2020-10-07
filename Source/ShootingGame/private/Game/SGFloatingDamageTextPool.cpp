@@ -1,11 +1,44 @@
 #include "SGFloatingDamageTextPool.h"
 #include "SGFloatingDamageText.h"
+#include "PoolService.h"
 #include "Components/WidgetComponent.h"
 
 ASGFloatingDamageTextPool::ASGFloatingDamageTextPool()
 {
-	FloatingDamageTextComponentPool.Reserve(20);
-	for (int32 i = 0; i < 20; i++)
+	CreateFloatingDamageTextComponentPool();
+
+	CurrentIndex = 0;
+}
+
+void ASGFloatingDamageTextPool::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	CreateFloatingDamageTextWidgetPool();
+}
+
+void ASGFloatingDamageTextPool::SetTextAndPlay(int32 Damage, FVector Location, bool bIsHitHead)
+{
+	if (CurrentIndex == PoolService::FloatingDamageTextCount)
+	{
+		CurrentIndex = 0;
+	}
+
+	auto FloatingDamageTextComponent = FloatingDamageTextComponentPool[CurrentIndex];
+	FloatingDamageTextComponent->SetWorldLocation(Location);
+	FloatingDamageTextComponent->SetVisibility(true);
+
+	auto FloatingDamageTextWidget = FloatingDamageTextWidgetPool[CurrentIndex];
+	FloatingDamageTextWidget->SetText(FString::FromInt(Damage), bIsHitHead);
+	FloatingDamageTextWidget->PlayFadeAnimation();
+
+	++CurrentIndex;
+}
+
+void ASGFloatingDamageTextPool::CreateFloatingDamageTextComponentPool()
+{
+	FloatingDamageTextComponentPool.Reserve(PoolService::FloatingDamageTextCount);
+	for (int32 i = 0; i < PoolService::FloatingDamageTextCount; i++)
 	{
 		FString Text = FString(TEXT("FloatingDamageTextWidget"));
 		FString Number = FString::FromInt(i);
@@ -25,16 +58,10 @@ ASGFloatingDamageTextPool::ASGFloatingDamageTextPool()
 			FloatingDamageTextComponent->SetDrawSize(FVector2D(50.0f, 5.0f));
 		}
 	}
-
-	CurrentIndex = 0;
 }
 
-void ASGFloatingDamageTextPool::BeginPlay()
+void ASGFloatingDamageTextPool::CreateFloatingDamageTextWidgetPool()
 {
-	Super::BeginPlay();
-	
-	SGLOG(Warning, TEXT("BeginPlay %d"), FloatingDamageTextComponentPool.Num());
-
 	FloatingDamageTextWidgetPool.Reserve(FloatingDamageTextComponentPool.Num());
 	for (const auto& FloatingDamageTextComponent : FloatingDamageTextComponentPool)
 	{
@@ -47,22 +74,4 @@ void ASGFloatingDamageTextPool::BeginPlay()
 	{
 		FloatingDamageTextComponent->SetVisibility(false);
 	}
-}
-
-void ASGFloatingDamageTextPool::SetTextAndPlay(int32 Damage, FVector Location, bool bIsHitHead)
-{
-	if (CurrentIndex == 20)
-	{
-		CurrentIndex = 0;
-	}
-
-	auto FloatingDamageTextComponent = FloatingDamageTextComponentPool[CurrentIndex];
-	FloatingDamageTextComponent->SetWorldLocation(Location);
-	FloatingDamageTextComponent->SetVisibility(true);
-
-	auto FloatingDamageTextWidget = FloatingDamageTextWidgetPool[CurrentIndex];
-	FloatingDamageTextWidget->SetText(FString::FromInt(Damage), bIsHitHead);
-	FloatingDamageTextWidget->PlayFadeAnimation();
-
-	++CurrentIndex;
 }

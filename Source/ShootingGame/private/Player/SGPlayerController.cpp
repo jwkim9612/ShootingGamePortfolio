@@ -47,14 +47,12 @@ void ASGPlayerController::OnPossess(APawn * aPawn)
 	SGHitEffectWidget->AddToViewport(1);
 
 	BindWidgetToPlayerState();
-
-	SGLOG(Warning, TEXT("Possess Controller"));
 }
 
 void ASGPlayerController::BeginPlay()
 {
-	
-	SGLOG(Warning, TEXT("Begin Controller"));
+	Super::BeginPlay();
+
 }
 
 USGHitEffectWidget * ASGPlayerController::GetSGHitEffectWidget() const

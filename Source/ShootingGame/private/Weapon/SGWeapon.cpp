@@ -1,5 +1,6 @@
 #include "SGWeapon.h"
 #include "SGProjectile.h"
+#include "PoolService.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ASGWeapon::ASGWeapon()
@@ -22,7 +23,7 @@ ASGWeapon::ASGWeapon()
 	ReloadAudioComponent->SetVolumeMultiplier(0.3f);
 	AmmoPickupAudioComponent->SetVolumeMultiplier(0.3f);
 
-	ProjectilePool.Reserve(10);
+	ProjectilePool.Reserve(PoolService::ProjectileCount);
 
 	CurrentProjectileIndex = 0;
 }

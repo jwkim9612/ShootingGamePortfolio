@@ -1,6 +1,7 @@
 #include "SGAmmo.h"
 #include "SGPlayer.h"
 #include "SGWeapon.h"
+#include "AmmoService.h"
 
 ASGAmmo::ASGAmmo()
 {
@@ -17,6 +18,7 @@ void ASGAmmo::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SetCount();
 }
 
 void ASGAmmo::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -35,6 +37,22 @@ void ASGAmmo::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * Othe
 		}
 
 		Destroy();
+	}
+}
+
+void ASGAmmo::SetCount()
+{
+	if (Count == 0)
+	{
+		switch (Type)
+		{
+		case WeaponType::Rifle:
+			Count = FMath::RandRange(AmmoService::RandomMinCountOfRifle, AmmoService::RandomMaxCountOfRifle);
+			break;
+		case WeaponType::Pistol:
+			Count = FMath::RandRange(AmmoService::RandomMinCountOfPistol, AmmoService::RandomMaxCountOfPistol);
+			break;
+		}
 	}
 }
 

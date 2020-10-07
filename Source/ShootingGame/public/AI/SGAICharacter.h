@@ -33,4 +33,7 @@ private:
 private:
 	UPROPERTY(EditAnywhere, category = "Stat", meta = (AllowPrivateAccess = true))
 	int32 Health;
+
+	UPROPERTY(EditAnywhere, category = "DropAmmo", meta = (AllowPrivateAccess = true))
+	TSubclassOf<class ASGAmmo> DropAmmo;
 };

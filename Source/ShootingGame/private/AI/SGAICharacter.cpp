@@ -2,6 +2,7 @@
 #include "SGPlayer.h"
 #include "SGAIController.h"
 #include "AIService.h"
+#include "SGAmmo.h"
 #include "Perception/PawnSensingComponent.h"
 
 ASGAICharacter::ASGAICharacter()
@@ -15,6 +16,8 @@ ASGAICharacter::ASGAICharacter()
 
 	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensing"));
 	PawnSensing->SetPeripheralVisionAngle(AIService::PeripheralVisionAngle);
+
+	Health = 100.0f;
 }
 
 void ASGAICharacter::BeginPlay()
@@ -42,6 +45,13 @@ float ASGAICharacter::TakeDamage(float Damage, FDamageEvent const & DamageEvent,
 {
 	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
+	Health = FMath::Clamp(Health - static_cast<int>(Damage), 0, Health);
+
+	if (Health <= 0)
+	{
+		GetWorld()->SpawnActor<ASGAmmo>(DropAmmo, GetActorLocation(), FRotator::ZeroRotator);
+		Destroy();
+	}
 
 	return FinalDamage;
 }
