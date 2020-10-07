@@ -1,4 +1,5 @@
 #include "SGGameInstance.h"
+#include "SGFloatingDamageTextPool.h"
 #include "SGWeapon.h"
 
 void USGGameInstance::Init()
@@ -8,6 +9,8 @@ void USGGameInstance::Init()
 	InitializeParticleDataTable();
 	InitializeWeaponDataTable();
 	InitializeImageDataTable();
+
+	FloatingDamageTextPool = GetWorld()->SpawnActor<ASGFloatingDamageTextPool>(FloatingDamageTextPoolClass, FVector::ZeroVector, FRotator::ZeroRotator);
 }
 
 void USGGameInstance::InitializeParticleDataTable()
@@ -95,4 +98,9 @@ UTexture2D* USGGameInstance::TryGetImage(FString Name)
 
 	SGLOG(Warning, TEXT("%s is no Data"), *Name);
 	return nullptr;
+}
+
+void USGGameInstance::PlayFloatingDamageText(int32 Damage, FVector Location, bool bIsHitHead)
+{
+	FloatingDamageTextPool->SetTextAndPlay(Damage, Location, bIsHitHead);
 }

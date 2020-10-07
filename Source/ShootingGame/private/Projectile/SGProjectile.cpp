@@ -80,7 +80,7 @@ void ASGProjectile::ClearDisableTimer()
 
 void ASGProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-
+	UParticleSystem* ParticleSystem;
 	ACharacter* TargetActor = Cast<ACharacter>(OtherActor);
 	if (TargetActor != nullptr)
 	{
@@ -89,23 +89,22 @@ void ASGProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 
 		if (Hit.BoneName.ToString().Equals(TEXT("head")))
 		{
-			SGLOG(Warning, TEXT("Head Shot!"));
+			SGGameInstance->PlayFloatingDamageText(Damage * 2.0f, Hit.Location, true);
+		}
+		else
+		{
+			SGGameInstance->PlayFloatingDamageText(Damage, Hit.Location);
 		}
 
-		auto ParticleSystem = SGGameInstance->TryGetParticleSystem(FString("HitCharacter"));
-		if (ParticleSystem != nullptr)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, Hit.Location);
-		}
+		ParticleSystem = SGGameInstance->TryGetParticleSystem(FString("HitCharacter"));
 	}
 	else
 	{
-		auto ParticleSystem = SGGameInstance->TryGetParticleSystem(FString("HitWall"));
-		if (ParticleSystem != nullptr)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, Hit.Location);
-		}
+		ParticleSystem = SGGameInstance->TryGetParticleSystem(FString("HitWall"));
 	}
+
+	auto Particle = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, Hit.Location);
+	Particle->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 
 	ClearDisableTimer();
 	Disable();

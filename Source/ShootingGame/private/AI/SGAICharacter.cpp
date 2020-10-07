@@ -42,7 +42,6 @@ float ASGAICharacter::TakeDamage(float Damage, FDamageEvent const & DamageEvent,
 {
 	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
-	SGLOG(Warning, TEXT("TakeDamage!!!"));
 
 	return FinalDamage;
 }
@@ -53,6 +52,5 @@ void ASGAICharacter::OnSeePlayer(APawn * Pawn)
 	if (Player != nullptr)
 	{
 		SGAIController->MoveToActor(Player, 50.0f);
-		SGLOG(Warning, TEXT("See Player!"));
 	}
 }

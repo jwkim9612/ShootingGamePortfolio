@@ -13,9 +13,13 @@ class SHOOTINGGAME_API USGFloatingDamageText : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	void SetText(FString NewDamageText);
+	void SetText(FString NewDamageText, bool bIsHitHead = false);
+	void PlayFadeAnimation();
 
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* DamageText;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+	UWidgetAnimation* Fade;
 };

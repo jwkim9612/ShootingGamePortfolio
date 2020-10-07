@@ -26,6 +26,8 @@ public:
 	UClass* TryGetWeaponClass(FString Name);
 	class UTexture2D* TryGetImage(FString Name);
 
+	void PlayFloatingDamageText(int32 Damage, FVector Location, bool bIsHitHead = false);
+
 public:
 	FStreamableManager AssetLoader;
 
@@ -48,4 +50,11 @@ private:
 
 	UPROPERTY()
 	TMap<FString, class UTexture2D*> ImageTable;
+
+private:
+	UPROPERTY(EditAnywhere, Category = "FloatingDamageText")
+	TSubclassOf<class ASGFloatingDamageTextPool> FloatingDamageTextPoolClass;
+
+	UPROPERTY()
+	class ASGFloatingDamageTextPool* FloatingDamageTextPool;
 };
