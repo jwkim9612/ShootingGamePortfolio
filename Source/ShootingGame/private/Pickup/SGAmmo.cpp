@@ -10,8 +10,9 @@ ASGAmmo::ASGAmmo()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	RootComponent = StaticMesh;
 
-	StaticMesh->SetCollisionProfileName(TEXT("OverlapAll"));
+	StaticMesh->SetCollisionProfileName(TEXT("OverlapOnlyPawnPhysicsActor"));
 	StaticMesh->OnComponentBeginOverlap.AddDynamic(this, &ASGAmmo::OnOverlapBegin);
+	StaticMesh->SetSimulatePhysics(true);
 }
 
 void ASGAmmo::BeginPlay()
