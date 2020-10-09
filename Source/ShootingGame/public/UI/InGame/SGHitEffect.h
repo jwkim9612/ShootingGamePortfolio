@@ -2,13 +2,13 @@
 
 #include "ShootingGame.h"
 #include "Blueprint/UserWidget.h"
-#include "SGHitEffectWidget.generated.h"
+#include "SGHitEffect.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SHOOTINGGAME_API USGHitEffectWidget : public UUserWidget
+class SHOOTINGGAME_API USGHitEffect : public UUserWidget
 {
 	GENERATED_BODY()
 		

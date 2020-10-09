@@ -2,7 +2,7 @@
 #include "SGPlayerController.h"
 #include "SGPlayerState.h"
 #include "PlayerService.h"
-#include "SGHitEffectWidget.h"
+#include "SGHitEffect.h"
 #include "SGHUDWidget.h"
 #include "SGWeapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -96,6 +96,8 @@ void ASGPlayer::BeginPlay()
 	SGWeaponHUD->BindWeapon(Rifle);
 	SGWeaponHUD->BindWeapon(Pistol);
 
+	SGLOG(Warning, TEXT("Begin Character3"));
+
 	//Pistol->SetVisibility(false);
 	//CurrentWeapon = Rifle;
 	SelectRifle();
@@ -187,7 +189,7 @@ float ASGPlayer::TakeDamage(float Damage, FDamageEvent const & DamageEvent, ACon
 	float FinalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
 	SGPlayerState->SetHPToDamage(FinalDamage);
-	SGPlayerController->GetSGHitEffectWidget()->PlayFadeAnimation();
+	SGPlayerController->GetSGHUDWidget()->PlayFadeHitEffectAnimation();
 	SGPlayerController->GetSGHUDWidget()->PlayFadeInHPBarAnimation();
 
 	SetHealingTimer();

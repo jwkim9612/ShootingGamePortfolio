@@ -10,7 +10,7 @@ void USGGameInstance::Init()
 	InitializeWeaponDataTable();
 	InitializeImageDataTable();
 
-	FloatingDamageTextPool = GetWorld()->SpawnActor<ASGFloatingDamageTextPool>(FloatingDamageTextPoolClass, FVector::ZeroVector, FRotator::ZeroRotator);
+	CreateFloatingDamageTextPool();
 }
 
 void USGGameInstance::InitializeParticleDataTable()
@@ -65,6 +65,11 @@ void USGGameInstance::InitializeImageDataTable()
 			ImageTable.Add(Data->Name, AssetLoader.LoadSynchronous(Data->ImagePath));
 		}
 	}
+}
+
+void USGGameInstance::CreateFloatingDamageTextPool()
+{
+	FloatingDamageTextPool = GetWorld()->SpawnActor<ASGFloatingDamageTextPool>(FloatingDamageTextPoolClass, FVector::ZeroVector, FRotator::ZeroRotator);
 }
 
 UParticleSystem * USGGameInstance::TryGetParticleSystem(FString Name)

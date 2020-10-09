@@ -21,6 +21,8 @@ private:
 	void InitializeWeaponDataTable();
 	void InitializeImageDataTable();
 
+	void CreateFloatingDamageTextPool();
+
 public:
 	class UParticleSystem* TryGetParticleSystem(FString Name);
 	UClass* TryGetWeaponClass(FString Name);

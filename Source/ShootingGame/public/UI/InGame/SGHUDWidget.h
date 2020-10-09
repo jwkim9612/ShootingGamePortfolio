@@ -18,6 +18,7 @@ public:
 public:
 	void PlayFadeInHPBarAnimation();
 	void PlayFadeOutHPBarAnimation();
+	void PlayFadeHitEffectAnimation();
 
 	void SetControllingPawn(APawn* aPawn);
 
@@ -31,6 +32,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class USGCrossHair* SGCrossHair;
+
+	UPROPERTY(meta = (BindWidget))
+	class USGHitEffect* SGHitEffect;
 
 	UPROPERTY(meta = (BindWidget))
 	class USGWeaponHUD* SGWeaponHUD;

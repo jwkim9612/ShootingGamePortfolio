@@ -20,7 +20,6 @@ public:
 	virtual void BeginPlay() override;
 
 public:
-	class USGHitEffectWidget* GetSGHitEffectWidget() const;
 	class USGHUDWidget* GetSGHUDWidget() const;
 
 	void SetDefaultSpreadCrossHair(float SpreadValue);
@@ -33,15 +32,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "UI", meta = (AllowprivateAccess = true))
 	TSubclassOf<class UUserWidget> SGHUDWidgetClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI", meta = (AllowprivateAccess = true))
-	TSubclassOf<class UUserWidget> SGHitEffectWidgetClass;
-
-	UPROPERTY()
-	class ASGPlayerState* SGPlayerState;
-
 	UPROPERTY()
 	class USGHUDWidget* SGHUDWidget;
 
 	UPROPERTY()
-	class USGHitEffectWidget* SGHitEffectWidget;
+	class ASGPlayerState* SGPlayerState;
+
+
 };

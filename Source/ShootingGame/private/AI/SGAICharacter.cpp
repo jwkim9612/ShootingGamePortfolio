@@ -49,7 +49,7 @@ float ASGAICharacter::TakeDamage(float Damage, FDamageEvent const & DamageEvent,
 
 	if (Health <= 0)
 	{
-		GetWorld()->SpawnActor<ASGAmmo>(DropAmmo, GetActorLocation(), FRotator::ZeroRotator);
+		DropItem();
 		Destroy();
 	}
 
@@ -62,5 +62,13 @@ void ASGAICharacter::OnSeePlayer(APawn * Pawn)
 	if (Player != nullptr)
 	{
 		SGAIController->MoveToActor(Player, 50.0f);
+	}
+}
+
+void ASGAICharacter::DropItem()
+{
+	if (DropAmmo != nullptr)
+	{
+		GetWorld()->SpawnActor<ASGAmmo>(DropAmmo, GetActorLocation(), FRotator::ZeroRotator);
 	}
 }

@@ -1,6 +1,6 @@
 #include "SGPlayerController.h"
 #include "SGHUDWidget.h"
-#include "SGHitEffectWidget.h"
+#include "SGHitEffect.h"
 #include "SGFloatingDamageText.h"
 #include "SGPlayerState.h"
 #include "SGHPBar.h"
@@ -8,26 +8,15 @@
 
 ASGPlayerController::ASGPlayerController()
 {
-	static ConstructorHelpers::FClassFinder<USGHUDWidget> SGHUDWidget_Class(TEXT("/Game/BluePrint/UI/BP_SGHUDWidget.BP_SGHUDWidget_C"));
+	static ConstructorHelpers::FClassFinder<USGHUDWidget> SGHUDWidget_Class(TEXT("/Game/BluePrint/UI/InGame/BP_SGHUDWidget.BP_SGHUDWidget_C"));
 	if (SGHUDWidget_Class.Succeeded())
 	{
 		SGHUDWidgetClass = SGHUDWidget_Class.Class;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HUDWidgetClass is null!!"));
+		SGLOG(Warning, TEXT("HUDWidgetClass is null!!"));
 	}
-
-	static ConstructorHelpers::FClassFinder<USGHitEffectWidget> SGHitEffectWidget_Class(TEXT("/Game/BluePrint/UI/BP_SGHitEffectWidget.BP_SGHitEffectWidget_C"));
-	if (SGHitEffectWidget_Class.Succeeded())
-	{
-		SGHitEffectWidgetClass = SGHitEffectWidget_Class.Class;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HitEffectWidgetClass is null!!"));
-	}
-
 }
 
 void ASGPlayerController::OnPossess(APawn * aPawn)
@@ -42,10 +31,6 @@ void ASGPlayerController::OnPossess(APawn * aPawn)
 	SGHUDWidget->AddToViewport(0);
 	SGHUDWidget->SetControllingPawn(aPawn);
 
-	SGCHECK(SGHitEffectWidgetClass);
-	SGHitEffectWidget = CreateWidget<USGHitEffectWidget>(this, SGHitEffectWidgetClass);
-	SGHitEffectWidget->AddToViewport(1);
-
 	BindWidgetToPlayerState();
 }
 
@@ -53,11 +38,8 @@ void ASGPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-}
-
-USGHitEffectWidget * ASGPlayerController::GetSGHitEffectWidget() const
-{
-	return SGHitEffectWidget;
+	FInputModeGameOnly Mode;
+	SetInputMode(Mode);
 }
 
 USGHUDWidget * ASGPlayerController::GetSGHUDWidget() const

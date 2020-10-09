@@ -23,6 +23,8 @@ private:
 	UFUNCTION()
 	void OnSeePlayer(APawn* Pawn);
 
+	void DropItem();
+
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	class UPawnSensingComponent* PawnSensing;

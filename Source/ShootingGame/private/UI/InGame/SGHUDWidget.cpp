@@ -2,6 +2,7 @@
 #include "SGHPBar.h"
 #include "SGCrossHair.h"
 #include "SGWeaponHUD.h"
+#include "SGHitEffect.h"
 #include "SGPlayer.h"
 
 bool USGHUDWidget::Initialize()
@@ -31,6 +32,12 @@ void USGHUDWidget::PlayFadeOutHPBarAnimation()
 	}
 
 	bIsOnShowHPBar = false;
+}
+
+void USGHUDWidget::PlayFadeHitEffectAnimation()
+{
+	SGCHECK(SGHitEffect);
+	SGHitEffect->PlayFadeAnimation();
 }
 
 void USGHUDWidget::SetControllingPawn(APawn * aPawn)
