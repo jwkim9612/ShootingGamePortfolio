@@ -24,11 +24,11 @@ void ASGFloatingDamageTextPool::SetTextAndPlay(int32 Damage, FVector Location, b
 		CurrentIndex = 0;
 	}
 
-	auto FloatingDamageTextComponent = FloatingDamageTextComponentPool[CurrentIndex];
+	UWidgetComponent* FloatingDamageTextComponent = FloatingDamageTextComponentPool[CurrentIndex];
 	FloatingDamageTextComponent->SetWorldLocation(Location);
 	FloatingDamageTextComponent->SetVisibility(true);
 
-	auto FloatingDamageTextWidget = FloatingDamageTextWidgetPool[CurrentIndex];
+	USGFloatingDamageText* FloatingDamageTextWidget = FloatingDamageTextWidgetPool[CurrentIndex];
 	FloatingDamageTextWidget->SetText(FString::FromInt(Damage), bIsHitHead);
 	FloatingDamageTextWidget->PlayFadeAnimation();
 
@@ -44,7 +44,7 @@ void ASGFloatingDamageTextPool::CreateFloatingDamageTextComponentPool()
 		FString Number = FString::FromInt(i);
 		Text.Append(Number);
 
-		auto FloatingTextWidget = CreateDefaultSubobject<UWidgetComponent>(FName(*Text));
+		UWidgetComponent* FloatingTextWidget = CreateDefaultSubobject<UWidgetComponent>(FName(*Text));
 		FloatingTextWidget->SetWidgetSpace(EWidgetSpace::Screen);
 		FloatingDamageTextComponentPool.Add(FloatingTextWidget);
 	}

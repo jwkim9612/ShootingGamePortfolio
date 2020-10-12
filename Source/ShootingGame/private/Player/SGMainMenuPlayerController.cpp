@@ -49,37 +49,30 @@ void ASGMainMenuPlayerController::InitializeWidgets()
 
 void ASGMainMenuPlayerController::ShowMainMenuWidget()
 {
-	if (CurrentWidget != nullptr)
-	{
-		CurrentWidget->RemoveFromViewport();
-	}
-
 	// 이유 모를 InvocationList [CurFunctionIndex]! = InDelegate 오류 때문에 추가 // 
 	SGMainMenuWidget = CreateWidget<USGMainMenuWidget>(this, MainMenuWidgetClass);
 	//////////////////////////////////////////////////////////////////////////////
 
-	CurrentWidget = SGMainMenuWidget;
-	CurrentWidget->AddToViewport();
+	ShowWidget(SGMainMenuWidget);
 }
 
 void ASGMainMenuPlayerController::ShowSelectRifleWidget()
 {
-	if (CurrentWidget != nullptr)
-	{
-		CurrentWidget->RemoveFromViewport();
-	}
-
-	CurrentWidget = SGSelectRifleWidget;
-	CurrentWidget->AddToViewport();
+	ShowWidget(SGSelectRifleWidget);
 }
 
 void ASGMainMenuPlayerController::ShowSelectPistolWidget()
+{
+	ShowWidget(SGSelectPistolWidget);
+}
+
+void ASGMainMenuPlayerController::ShowWidget(UUserWidget * Widget)
 {
 	if (CurrentWidget != nullptr)
 	{
 		CurrentWidget->RemoveFromViewport();
 	}
 
-	CurrentWidget = SGSelectPistolWidget;
+	CurrentWidget = Widget;
 	CurrentWidget->AddToViewport();
 }

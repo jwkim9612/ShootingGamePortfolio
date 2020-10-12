@@ -25,6 +25,7 @@ public:
 	void ShowMainMenuWidget();
 	void ShowSelectRifleWidget();
 	void ShowSelectPistolWidget();
+	void ShowWidget(class UUserWidget* Widget);
 
 private:
 	UPROPERTY(EditDefaultsOnly, category = "MainMenu")

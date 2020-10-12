@@ -16,11 +16,18 @@ class SHOOTINGGAME_API USGGameInstance : public UGameInstance
 public:
 	void Init() override;
 
+public:
+	void SetSelectedRifleName(FString RifleName);
+	void SetSelectedPistolName(FString PistolName);
+	FString GetSelectedRifleName() const;
+	FString GetSelectedPistolName() const;
+
 private:
 	void InitializeParticleDataTable();
 	void InitializeWeaponDataTable();
 	void InitializeImageDataTable();
 
+	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void CreateFloatingDamageTextPool();
 
 public:
@@ -59,4 +66,8 @@ private:
 
 	UPROPERTY()
 	class ASGFloatingDamageTextPool* FloatingDamageTextPool;
+
+private:
+	FString SelectedRifleName;
+	FString SelectedPistolName;
 };
