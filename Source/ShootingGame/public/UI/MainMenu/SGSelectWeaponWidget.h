@@ -55,6 +55,9 @@ protected:
 	class UButton* PreviousButton;
 
 	UPROPERTY(meta = (BindWidget))
+	class USGWeaponButton* SGWeaponButton;
+
+	UPROPERTY(meta = (BindWidget))
 	class UHorizontalBox* WeaponButtonBox;
 
 	UPROPERTY(meta = (BindWidget))

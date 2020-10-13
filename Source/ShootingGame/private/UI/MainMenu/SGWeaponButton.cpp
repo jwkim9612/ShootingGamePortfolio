@@ -12,9 +12,13 @@ void USGWeaponButton::NativeConstruct()
 	ChooseButton->OnClicked.AddDynamic(this, &USGWeaponButton::OnClicked);
 }
 
-void USGWeaponButton::SetWeaponName(FString NewName)
+void USGWeaponButton::SetWeaponData(FSGWeaponData * WeaponData)
 {
-	Name->SetText(FText::FromString(NewName));
+	Name->SetText(FText::FromString(WeaponData->Name));
+	MaxAmmo->SetText(FText::FromString(FString::Printf(TEXT("MaxAmmo : %d"), WeaponData->MaxAmmo)));
+	ClipSize->SetText(FText::FromString(FString::Printf(TEXT("ClipSize : %d"), WeaponData->ClipSize)));
+	FireRate->SetText(FText::FromString(FString::Printf(TEXT("FireRate : %.1f"), WeaponData->FireRate)));
+	Recoli->SetText(FText::FromString(FString::Printf(TEXT("Recoli : %.1f"), WeaponData->Recoli)));
 }
 
 void USGWeaponButton::SetWeaponType(WeaponType NewType)

@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
+#include "Components/HorizontalBoxSlot.h"
 
 void USGSelectWeaponWidget::NativeConstruct()
 {
@@ -72,10 +73,34 @@ void USGSelectWeaponWidget::OnPreviousClicked()
 
 void USGSelectWeaponWidget::CreateWeaponButtonList()
 {
-	auto WeaponButtons = WeaponButtonBox->GetAllChildren();
-	for (const auto& WeaponButton : WeaponButtons)
+	// 재생성 방지
+	if (WeaponButtonList.Num() == 0)
 	{
-		WeaponButtonList.Emplace(Cast<USGWeaponButton>(WeaponButton));
+		// 최대 표시되는 무기 갯수에 맞게 무기버튼 생성.
+		for (int WeaponButtonIndex = 0; WeaponButtonIndex < UIService::MaxCountOfWeaponSelectButtonPerPage; ++WeaponButtonIndex)
+		{
+			WeaponButtonList.Emplace(CreateWidget<USGWeaponButton>(this, SGWeaponButton->GetClass()));
+		}
+
+		// 원본 숨기기.
+		SGWeaponButton->SetVisibility(ESlateVisibility::Collapsed);
+
+		// HorizontalBox의 자식으로 설정
+		for (const auto& WeaponButton : WeaponButtonList)
+		{
+			WeaponButtonBox->AddChild(WeaponButton);
+		}
+
+		TArray<UPanelSlot*> PanelSlots = WeaponButtonBox->GetSlots();
+		for (const auto& PanelSlot : PanelSlots)
+		{
+			FSlateChildSize SlateChildSize;
+
+			UHorizontalBoxSlot* HorizontalBoxSlot = Cast<UHorizontalBoxSlot>(PanelSlot);
+			HorizontalBoxSlot->SetSize(SlateChildSize);
+			HorizontalBoxSlot->SetHorizontalAlignment(HAlign_Center);
+			HorizontalBoxSlot->SetVerticalAlignment(VAlign_Center);
+		}
 	}
 
 	int WeaponNameCount = WeaponNameList.Num();
@@ -146,5 +171,5 @@ void USGSelectWeaponWidget::UpdatePageButtonsVisibility()
 
 void USGSelectWeaponWidget::UpdateWeaponButtons()
 {
-
+	
 }

@@ -16,7 +16,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void SetWeaponName(FString NewName);
+	void SetWeaponData(FSGWeaponData* WeaponData);
 	void SetWeaponType(WeaponType NewType);
 
 private:
@@ -29,6 +29,18 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Name;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* MaxAmmo;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* ClipSize;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* FireRate;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Recoli;
 
 	WeaponType Type;
 };
