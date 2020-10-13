@@ -59,6 +59,7 @@ private:
 	void SpreadCorssHairSetting();
 	bool IsMoving();
 
+	void CreateWeapon();
 	void SelectRifle();
 	void SelectPistol();
 

@@ -15,6 +15,9 @@ class SHOOTINGGAME_API USGSelectPistolWidget : public USGSelectWeaponWidget
 protected:
 	virtual void NativeConstruct() override;
 
+protected:
+	virtual void UpdateWeaponButtons() override;
+
 private:
 	virtual void OnSelectClicked() override;
 	virtual void OnBackClicked() override;

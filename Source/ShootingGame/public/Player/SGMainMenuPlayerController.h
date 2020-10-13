@@ -27,6 +27,8 @@ public:
 	void ShowSelectPistolWidget();
 	void ShowWidget(class UUserWidget* Widget);
 
+	class UUserWidget* GetCurrentWidget() const;
+
 private:
 	UPROPERTY(EditDefaultsOnly, category = "MainMenu")
 	TSubclassOf<class USGMainMenuWidget> MainMenuWidgetClass;

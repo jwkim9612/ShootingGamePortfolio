@@ -177,6 +177,21 @@ void ASGWeapon::PlayAmmoPickupSound()
 	AmmoPickupAudioComponent->Play();
 }
 
+void ASGWeapon::SetWeaponData(FSGWeaponData* NewWeaponData)
+{
+	MaxAmmo = NewWeaponData->MaxAmmo;
+	ClipSize = NewWeaponData->ClipSize;
+	Ammo = NewWeaponData->Ammo;
+	FireRate = NewWeaponData->FireRate;
+	Recoli = NewWeaponData->Recoli;
+	Type = NewWeaponData->Type;
+
+	FireAudioComponent->SetSound(NewWeaponData->FireAudio);
+	ReloadAudioComponent->SetSound(NewWeaponData->ReloadAudio);
+	AmmoPickupAudioComponent->SetSound(NewWeaponData->AmmoPickupAudio);
+	MuzzleFlashParticle = NewWeaponData->MuzzleFlashParticle;
+}
+
 void ASGWeapon::SetVisibility(bool bNewVisibility)
 {
 	MeshComponent->SetVisibility(bNewVisibility);

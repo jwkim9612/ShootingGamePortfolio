@@ -2,6 +2,7 @@
 
 #include "ShootingGame.h"
 #include "Engine/GameInstance.h"
+#include "Engine/DataTable.h"
 #include "Engine/StreamableManager.h"
 #include "SGGameInstance.generated.h"
 
@@ -32,7 +33,7 @@ private:
 
 public:
 	class UParticleSystem* TryGetParticleSystem(FString Name);
-	UClass* TryGetWeaponClass(FString Name);
+	struct FSGWeaponData* TryGetWeaponData(FString Name);
 	class UTexture2D* TryGetImage(FString Name);
 
 	void PlayFloatingDamageText(int32 Damage, FVector Location, bool bIsHitHead = false);
@@ -54,8 +55,7 @@ private:
 	UPROPERTY()
 	TMap<FString, class UParticleSystem*> ParticleTable;
 
-	UPROPERTY()
-	TMap<FString, UClass*> WeaponTable;
+	TMap<FString, struct FSGWeaponData> WeaponTable;
 
 	UPROPERTY()
 	TMap<FString, class UTexture2D*> ImageTable;

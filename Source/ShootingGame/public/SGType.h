@@ -15,6 +15,22 @@ class SHOOTINGGAME_API USGType : public UObject
 	
 };
 
+enum class CameraMode : uint8
+{
+	None,
+	UnAiming,
+	Aiming,
+	Stand,
+	Crouch
+};
+
+UENUM(BlueprintType)
+enum class WeaponType : uint8
+{
+	None,
+	Rifle,
+	Pistol
+};
 
 USTRUCT()
 struct SHOOTINGGAME_API FSGParticleData : public FTableRowBase
@@ -39,7 +55,40 @@ public:
 	FString Name;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSoftClassPtr<class ASGWeapon> WeaponPath;
+	TSubclassOf<class ASGWeapon> Class;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ASGProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 MaxAmmo;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 ClipSize;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 Ammo;
+
+	UPROPERTY(EditDefaultsOnly)
+	float FireRate;
+
+	UPROPERTY(EditDefaultsOnly)
+	float Recoli;
+
+	UPROPERTY(EditDefaultsOnly)
+	WeaponType Type;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* FireAudio;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* ReloadAudio;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* AmmoPickupAudio;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UParticleSystem* MuzzleFlashParticle;
 };
 
 USTRUCT()
@@ -53,21 +102,4 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSoftObjectPtr<class UTexture2D> ImagePath;
-};
-
-enum class CameraMode : uint8
-{
-	None,
-	UnAiming,
-	Aiming,
-	Stand,
-	Crouch
-};
-
-UENUM(BlueprintType)
-enum class WeaponType : uint8 
-{
-	None,
-	Rifle,
-	Pistol
 };

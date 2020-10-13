@@ -5,19 +5,22 @@
 
 ASGMainMenuPlayerController::ASGMainMenuPlayerController()
 {
-	static ConstructorHelpers::FClassFinder<USGMainMenuWidget> SGMainMenuWidget_Class(TEXT("/Game/BluePrint/UI/MainMenu/BP_MainMenu.BP_MainMenu_C"));
+	//static ConstructorHelpers::FClassFinder<USGMainMenuWidget> SGMainMenuWidget_Class(TEXT("/Game/BluePrint/UI/MainMenu/BP_MainMenu.BP_MainMenu_C"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> SGMainMenuWidget_Class(TEXT("/Game/BluePrint/UI/MainMenu/BP_MainMenu.BP_MainMenu_C"));
 	if (SGMainMenuWidget_Class.Succeeded())
 	{
 		MainMenuWidgetClass = SGMainMenuWidget_Class.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<USGSelectRifleWidget> SGSelectRifleWidget_Class(TEXT("/Game/BluePrint/UI/MainMenu/BP_SelectRIfle.BP_SelectRifle_C"));
+	//static ConstructorHelpers::FClassFinder<USGSelectRifleWidget> SGSelectRifleWidget_Class(TEXT("/Game/BluePrint/UI/MainMenu/BP_SelectRIfle.BP_SelectRifle_C"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> SGSelectRifleWidget_Class(TEXT("/Game/BluePrint/UI/MainMenu/BP_SelectRIfle.BP_SelectRifle_C"));
 	if (SGSelectRifleWidget_Class.Succeeded())
 	{
 		SelectRifleWidgetClass = SGSelectRifleWidget_Class.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<USGSelectPistolWidget> SGSelectPistolWidget_Class(TEXT("/Game/BluePrint/UI/MainMenu/BP_SelectPistol.BP_SelectPistol_C"));
+	//static ConstructorHelpers::FClassFinder<USGSelectPistolWidget> SGSelectPistolWidget_Class(TEXT("/Game/BluePrint/UI/MainMenu/BP_SelectPistol.BP_SelectPistol_C"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> SGSelectPistolWidget_Class(TEXT("/Game/BluePrint/UI/MainMenu/BP_SelectPistol.BP_SelectPistol_C"));
 	if (SGSelectPistolWidget_Class.Succeeded())
 	{
 		SelectPistolWidgetClass = SGSelectPistolWidget_Class.Class;
@@ -75,4 +78,9 @@ void ASGMainMenuPlayerController::ShowWidget(UUserWidget * Widget)
 
 	CurrentWidget = Widget;
 	CurrentWidget->AddToViewport();
+}
+
+UUserWidget * ASGMainMenuPlayerController::GetCurrentWidget() const
+{
+	return CurrentWidget;
 }

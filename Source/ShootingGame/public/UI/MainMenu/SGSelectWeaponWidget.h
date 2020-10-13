@@ -15,6 +15,13 @@ class SHOOTINGGAME_API USGSelectWeaponWidget : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 
+public:
+	void ShowSelectButton();
+	void HideSelectButton();
+	void SetSelectedWeaponText(FString WeaponName);
+	void ShowSelectedWeaponText();
+	void HideSelectedWeaponText();
+
 protected:
 	UFUNCTION()
 	virtual void OnSelectClicked();
@@ -28,10 +35,11 @@ protected:
 	UFUNCTION()
 	void OnPreviousClicked();
 
+	virtual void UpdateWeaponButtons();
+
 private:
 	void CreateWeaponButtonList();
 	void UpdatePageButtonsVisibility();
-	void UpdateWeaponButtons();
 
 protected:
 	UPROPERTY(meta = (BindWidget))
@@ -49,8 +57,8 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UHorizontalBox* WeaponButtonBox;
 
-	UPROPERTY()
-	TArray<class USGWeaponButton*> WeaponButtonList;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* SelectedWeaponText;
 
 	UPROPERTY()
 	class ASGMainMenuPlayerController* SGMainMenuPlayerController;
@@ -59,7 +67,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
 	TArray<FString> WeaponNameList;
 
-private:
+	UPROPERTY()
+	TArray<class USGWeaponButton*> WeaponButtonList;
+
 	int32 CurrentPage;
 	int32 PageCount;
 };

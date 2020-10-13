@@ -64,44 +64,7 @@ void ASGPlayer::BeginPlay()
 	SetCamera(CameraMode::UnAiming);
 	SetCamera(CameraMode::Stand);
 
-	// ¹«±â ÀåÂø //
-
-	//auto MyClass = Cast<UClass>(FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).ResolveClass());
-	//auto MyClass = FSoftClassPath(TEXT("/Game/BluePrint/Weapon/BP_SGDarkness_AssaultRifle.BP_SGDarkness_AssaultRifle_C")).TryLoadClass<UClass>();
-
-	auto MyClass = SGGameInstance->TryGetWeaponClass(TEXT("WhiteRifle"));
-	if (MyClass != nullptr)
-	{
-		Rifle = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass, &FVector::ZeroVector, &FRotator::ZeroRotator));
-		SGCHECK(Rifle);
-		Rifle->SetController(SGPlayerController);
-		Rifle->SetControllingPawn(this);
-		Rifle->CreateProjectilePool();
-		Rifle->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
-	}
-
-	auto MyClass2 = SGGameInstance->TryGetWeaponClass(TEXT("WhitePistol"));
-	if (MyClass2 != nullptr)
-	{
-		Pistol = Cast<ASGWeapon>(GetWorld()->SpawnActor(MyClass2, &FVector::ZeroVector, &FRotator::ZeroRotator));
-		Pistol->SetController(SGPlayerController);
-		Pistol->SetControllingPawn(this);
-		Pistol->CreateProjectilePool();
-		SGCHECK(Pistol);
-		Pistol->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
-	}
-
-	SGLOG(Warning, TEXT("Begin Character2"));
-
-	SGWeaponHUD->BindWeapon(Rifle);
-	SGWeaponHUD->BindWeapon(Pistol);
-
-	SGLOG(Warning, TEXT("Begin Character3"));
-
-	//Pistol->SetVisibility(false);
-	//CurrentWeapon = Rifle;
-	SelectRifle();
-	//////////////
+	CreateWeapon();
 }
 
 void ASGPlayer::Tick(float DeltaSeconds)
@@ -494,6 +457,39 @@ bool ASGPlayer::IsMoving()
 	}
 
 	return false;
+}
+
+void ASGPlayer::CreateWeapon()
+{
+	FString RifleName = SGGameInstance->GetSelectedRifleName();
+	FString PistolName = SGGameInstance->GetSelectedPistolName();
+
+	auto RifleData = SGGameInstance->TryGetWeaponData(RifleName);
+	if (RifleData != nullptr)
+	{
+		Rifle = Cast<ASGWeapon>(GetWorld()->SpawnActor(RifleData->Class, &FVector::ZeroVector, &FRotator::ZeroRotator));
+		SGCHECK(Rifle);
+		Rifle->SetController(SGPlayerController);
+		Rifle->SetControllingPawn(this);
+		Rifle->CreateProjectilePool();
+		Rifle->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
+	}
+
+	auto PistolData = SGGameInstance->TryGetWeaponData(PistolName);
+	if (PistolData != nullptr)
+	{
+		Pistol = Cast<ASGWeapon>(GetWorld()->SpawnActor(PistolData->Class, &FVector::ZeroVector, &FRotator::ZeroRotator));
+		Pistol->SetController(SGPlayerController);
+		Pistol->SetControllingPawn(this);
+		Pistol->CreateProjectilePool();
+		SGCHECK(Pistol);
+		Pistol->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon_Attach"));
+	}
+
+	SGWeaponHUD->BindWeapon(Rifle);
+	SGWeaponHUD->BindWeapon(Pistol);
+
+	SelectRifle();
 }
 
 void ASGPlayer::SelectRifle()

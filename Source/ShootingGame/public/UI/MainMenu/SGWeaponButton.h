@@ -17,8 +17,10 @@ protected:
 
 public:
 	void SetWeaponName(FString NewName);
+	void SetWeaponType(WeaponType NewType);
 
 private:
+	UFUNCTION()
 	void OnClicked();
 
 private:
@@ -27,4 +29,6 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Name;
+
+	WeaponType Type;
 };

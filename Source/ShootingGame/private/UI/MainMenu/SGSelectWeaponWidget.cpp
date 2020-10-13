@@ -4,6 +4,7 @@
 #include "UIService.h"
 #include "Components/Button.h"
 #include "Components/HorizontalBox.h"
+#include "Components/TextBlock.h"
 
 void USGSelectWeaponWidget::NativeConstruct()
 {
@@ -14,7 +15,35 @@ void USGSelectWeaponWidget::NativeConstruct()
 	SelectButton->OnClicked.AddUniqueDynamic(this, &USGSelectWeaponWidget::OnSelectClicked);
 	BackButton->OnClicked.AddUniqueDynamic(this, &USGSelectWeaponWidget::OnBackClicked);
 
+	HideSelectButton();
+	HideSelectedWeaponText();
 	CreateWeaponButtonList();
+}
+
+void USGSelectWeaponWidget::ShowSelectButton()
+{
+	SelectButton->SetVisibility(ESlateVisibility::Visible);
+}
+
+void USGSelectWeaponWidget::HideSelectButton()
+{
+	SelectButton->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void USGSelectWeaponWidget::SetSelectedWeaponText(FString WeaponName)
+{
+	FString StrText = FString::Printf(TEXT("Selected Weapon : %s"), *WeaponName);
+	SelectedWeaponText->SetText(FText::FromString(StrText));
+}
+
+void USGSelectWeaponWidget::ShowSelectedWeaponText()
+{
+	SelectedWeaponText->SetVisibility(ESlateVisibility::Visible);
+}
+
+void USGSelectWeaponWidget::HideSelectedWeaponText()
+{
+	SelectedWeaponText->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void USGSelectWeaponWidget::OnSelectClicked()
@@ -117,12 +146,5 @@ void USGSelectWeaponWidget::UpdatePageButtonsVisibility()
 
 void USGSelectWeaponWidget::UpdateWeaponButtons()
 {
-	int WeaponButtonCount = FMath::Clamp(WeaponNameList.Num(), 1, UIService::MaxCountOfWeaponSelectButtonPerPage);
 
-	for (int WeaponIndex = 0; WeaponIndex < WeaponButtonCount; ++WeaponIndex)
-	{
-		USGWeaponButton* WeaponButton = WeaponButtonList[WeaponIndex];
-		WeaponButton->SetWeaponName(WeaponNameList[WeaponIndex + CurrentPage - 1]);
-		WeaponButton->
-	}
 }

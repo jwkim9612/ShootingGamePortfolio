@@ -32,6 +32,7 @@ public:
 	void PlayReloadSound();
 	void PlayAmmoPickupSound();
 
+	void SetWeaponData(struct FSGWeaponData* NewWeaponData);
 	void SetVisibility(bool bNewVisibility);
 	void SetController(AController* NewController);
 	void SetControllingPawn(APawn* NewPawn);
@@ -56,29 +57,29 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = true))
 	UAudioComponent* AmmoPickupAudioComponent;
 
-	UPROPERTY(EditDefaultsOnly, category = "bullet", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, category = "bullet", meta = (AllowPrivateAccess = true))
 	TSubclassOf<class ASGProjectile> ProjectileClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
 	UParticleSystem* MuzzleFlashParticle;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
 	int32 MaxAmmo;
 
-	UPROPERTY(EditAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
 	int32 ClipSize;
 
-	UPROPERTY(EditAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
 	int32 Ammo;
 
-	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
 	float FireRate;
 
-	UPROPERTY(EditDefaultsOnly, Category = "bullet", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "bullet", meta = (AllowPrivateAccess = true))
 	float Recoli;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = true))
 	WeaponType Type;
 
 private:
