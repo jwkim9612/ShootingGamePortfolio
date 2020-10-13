@@ -4,6 +4,7 @@
 #include "SGSelectWeaponWidget.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 void USGWeaponButton::NativeConstruct()
 {
@@ -14,10 +15,13 @@ void USGWeaponButton::NativeConstruct()
 
 void USGWeaponButton::SetWeaponData(FSGWeaponData * WeaponData)
 {
+	USGGameInstance* SGGameInstance = Cast<USGGameInstance>(GetWorld()->GetGameInstance());
+
+	WeaponImage->SetBrushFromTexture(SGGameInstance->TryGetImage(WeaponData->Name));
 	Name->SetText(FText::FromString(WeaponData->Name));
 	MaxAmmo->SetText(FText::FromString(FString::Printf(TEXT("MaxAmmo : %d"), WeaponData->MaxAmmo)));
 	ClipSize->SetText(FText::FromString(FString::Printf(TEXT("ClipSize : %d"), WeaponData->ClipSize)));
-	FireRate->SetText(FText::FromString(FString::Printf(TEXT("FireRate : %.1f"), WeaponData->FireRate)));
+	FireRate->SetText(FText::FromString(FString::Printf(TEXT("FireRate : %.2f"), WeaponData->FireRate)));
 	Recoli->SetText(FText::FromString(FString::Printf(TEXT("Recoli : %.1f"), WeaponData->Recoli)));
 }
 

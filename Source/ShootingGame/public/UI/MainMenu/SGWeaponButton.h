@@ -28,6 +28,9 @@ private:
 	class UButton* ChooseButton;
 
 	UPROPERTY(meta = (BindWidget))
+	class UImage* WeaponImage;
+
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Name;
 
 	UPROPERTY(meta = (BindWidget))
