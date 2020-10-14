@@ -1,5 +1,6 @@
 #include "SGWeaponButton.h"
 #include "SGGameInstance.h"
+#include "SGWeapon.h"
 #include "SGMainMenuPlayerController.h"
 #include "SGSelectWeaponWidget.h"
 #include "Components/Button.h"
@@ -15,14 +16,15 @@ void USGWeaponButton::NativeConstruct()
 
 void USGWeaponButton::SetWeaponData(FSGWeaponData * WeaponData)
 {
-	USGGameInstance* SGGameInstance = Cast<USGGameInstance>(GetWorld()->GetGameInstance());
+	ASGWeapon* Weapon = WeaponData->Class->GetDefaultObject<ASGWeapon>();
 
-	WeaponImage->SetBrushFromTexture(SGGameInstance->TryGetImage(WeaponData->Name));
+	WeaponImage->SetBrushFromTexture(WeaponData->Image);
 	Name->SetText(FText::FromString(WeaponData->Name));
-	MaxAmmo->SetText(FText::FromString(FString::Printf(TEXT("MaxAmmo : %d"), WeaponData->MaxAmmo)));
-	ClipSize->SetText(FText::FromString(FString::Printf(TEXT("ClipSize : %d"), WeaponData->ClipSize)));
-	FireRate->SetText(FText::FromString(FString::Printf(TEXT("FireRate : %.2f"), WeaponData->FireRate)));
-	Recoli->SetText(FText::FromString(FString::Printf(TEXT("Recoli : %.1f"), WeaponData->Recoli)));
+	DamageText->SetText(FText::FromString(FString::Printf(TEXT("Damage : %d"), Weapon->GetDamage())));
+	MaxAmmoText->SetText(FText::FromString(FString::Printf(TEXT("MaxAmmo : %d"), WeaponData->MaxAmmo)));
+	ClipSizeText->SetText(FText::FromString(FString::Printf(TEXT("ClipSize : %d"), WeaponData->ClipSize)));
+	FireRateText->SetText(FText::FromString(FString::Printf(TEXT("FireRate : %.2f"), WeaponData->FireRate)));
+	RecoliText->SetText(FText::FromString(FString::Printf(TEXT("Recoli : %.1f"), WeaponData->Recoli)));
 }
 
 void USGWeaponButton::SetWeaponType(WeaponType NewType)

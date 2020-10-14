@@ -27,6 +27,7 @@ private:
 	void InitializeParticleDataTable();
 	void InitializeWeaponDataTable();
 	void InitializeImageDataTable();
+	void InitializeStageDataTable();
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void CreateFloatingDamageTextPool();
@@ -35,8 +36,10 @@ public:
 	class UParticleSystem* TryGetParticleSystem(FString Name);
 	struct FSGWeaponData* TryGetWeaponData(FString Name);
 	class UTexture2D* TryGetImage(FString Name);
+	struct FSGStageData* TryGetStageData(int32 Id);
 
 	void PlayFloatingDamageText(int32 Damage, FVector Location, bool bIsHitHead = false);
+	void LoadStage(int32 StageId);
 
 public:
 	FStreamableManager AssetLoader;
@@ -51,14 +54,19 @@ private:
 	UPROPERTY(EditAnywhere, Category = "ImageDataTable")
 	class UDataTable* ImageDataTable;
 
+	UPROPERTY(EditAnywhere, Category = "StageDataTable")
+	class UDataTable* StageDataTable;
+
 private:
 	UPROPERTY()
 	TMap<FString, class UParticleSystem*> ParticleTable;
 
-	TMap<FString, struct FSGWeaponData> WeaponTable;
-
 	UPROPERTY()
 	TMap<FString, class UTexture2D*> ImageTable;
+
+	TMap<FString, struct FSGWeaponData> WeaponTable;
+	TMap<int32, struct FSGStageData> StageTable;
+
 
 private:
 	UPROPERTY(EditAnywhere, Category = "FloatingDamageText")
@@ -66,6 +74,16 @@ private:
 
 	UPROPERTY()
 	class ASGFloatingDamageTextPool* FloatingDamageTextPool;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Loading")
+	TSubclassOf<class USGLoadingScreen> LoadingScreenClass;
+
+	UPROPERTY()
+	class USGLoadingScreen* SGLoadingScreen;
+
+	FTimerHandle LoadingTimerHandle;
+	float LoadingTImer;
 
 private:
 	FString SelectedRifleName;

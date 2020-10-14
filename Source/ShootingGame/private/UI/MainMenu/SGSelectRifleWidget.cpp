@@ -13,8 +13,6 @@ void USGSelectRifleWidget::NativeConstruct()
 
 void USGSelectRifleWidget::UpdateWeaponButtons()
 {
-	USGGameInstance* SGGameInstance = Cast<USGGameInstance>(GetGameInstance());
-
 	int WeaponButtonCount = FMath::Clamp(WeaponNameList.Num(), 1, UIService::MaxCountOfWeaponSelectButtonPerPage);
 
 	for (int WeaponIndex = 0; WeaponIndex < WeaponButtonCount; ++WeaponIndex)

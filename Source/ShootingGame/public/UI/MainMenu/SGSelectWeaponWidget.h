@@ -66,6 +66,8 @@ protected:
 	UPROPERTY()
 	class ASGMainMenuPlayerController* SGMainMenuPlayerController;
 
+	UPROPERTY()
+	class USGGameInstance* SGGameInstance;
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (AllowPrivateAccess = true))
 	TArray<FString> WeaponNameList;

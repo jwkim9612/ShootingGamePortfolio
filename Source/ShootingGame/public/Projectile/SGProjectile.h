@@ -24,6 +24,8 @@ public:
 	void SetController(AController* NewController);
 	void SetControllingPawn(APawn* NewPawn);
 
+	int32 GetDamage() const;
+
 private:
 	void SetDisableTimer(float DisableTimer);
 	void ClearDisableTimer();

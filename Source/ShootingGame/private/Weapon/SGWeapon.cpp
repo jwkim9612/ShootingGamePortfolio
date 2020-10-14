@@ -229,6 +229,12 @@ WeaponType ASGWeapon::GetWeaponType() const
 	return Type;
 }
 
+int32 ASGWeapon::GetDamage() const
+{
+	ASGProjectile* SGProjectile = ProjectileClass->GetDefaultObject<ASGProjectile>();
+	return SGProjectile->GetDamage();
+}
+
 void ASGWeapon::CreateProjectilePool()
 {
 	//MuzzleLocation = MeshComponent->GetSocketLocation(TEXT("Muzzle"));

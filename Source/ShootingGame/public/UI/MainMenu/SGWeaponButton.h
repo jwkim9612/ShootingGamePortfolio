@@ -34,16 +34,19 @@ private:
 	class UTextBlock* Name;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* MaxAmmo;
+	class UTextBlock* DamageText;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* ClipSize;
+	class UTextBlock* MaxAmmoText;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* FireRate;
+	class UTextBlock* ClipSizeText;
 
 	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* Recoli;
+	class UTextBlock* FireRateText;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* RecoliText;
 
 	WeaponType Type;
 };

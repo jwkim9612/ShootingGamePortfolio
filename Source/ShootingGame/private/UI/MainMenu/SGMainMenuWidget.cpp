@@ -25,5 +25,7 @@ void USGMainMenuWidget::OnContinueClicked()
 
 void USGMainMenuWidget::OnExitClicked()
 {
-	SGLOG(Warning, TEXT("Exit"));
+	SGLOG(Warning, TEXT("Quit"));
+	// 에디터까지 종료
+	//FGenericPlatformMisc::RequestExit(true);
 }

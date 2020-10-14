@@ -13,8 +13,6 @@ void USGSelectPistolWidget::NativeConstruct()
 
 void USGSelectPistolWidget::UpdateWeaponButtons()
 {
-	USGGameInstance* SGGameInstance = Cast<USGGameInstance>(GetGameInstance());
-
 	int WeaponButtonCount = FMath::Clamp(WeaponNameList.Num(), 1, UIService::MaxCountOfWeaponSelectButtonPerPage);
 
 	for (int WeaponIndex = 0; WeaponIndex < WeaponButtonCount; ++WeaponIndex)
@@ -29,7 +27,9 @@ void USGSelectPistolWidget::UpdateWeaponButtons()
 
 void USGSelectPistolWidget::OnSelectClicked()
 {
-	UGameplayStatics::OpenLevel(this, TEXT("Test"));
+	SGGameInstance->LoadStage(1);
+
+	//UGameplayStatics::OpenLevel(this, TEXT("Test"));
 }
 
 void USGSelectPistolWidget::OnBackClicked()

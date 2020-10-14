@@ -1,6 +1,7 @@
 #include "SGSelectWeaponWidget.h"
 #include "SGMainMenuPlayerController.h"
 #include "SGWeaponButton.h"
+#include "SGGameInstance.h"
 #include "UIService.h"
 #include "Components/Button.h"
 #include "Components/HorizontalBox.h"
@@ -12,6 +13,7 @@ void USGSelectWeaponWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	SGMainMenuPlayerController = Cast<ASGMainMenuPlayerController>(GetOwningPlayer());
+	SGGameInstance = Cast<USGGameInstance>(GetGameInstance());
 
 	SelectButton->OnClicked.AddUniqueDynamic(this, &USGSelectWeaponWidget::OnSelectClicked);
 	BackButton->OnClicked.AddUniqueDynamic(this, &USGSelectWeaponWidget::OnBackClicked);

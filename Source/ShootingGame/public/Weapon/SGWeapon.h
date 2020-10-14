@@ -41,6 +41,7 @@ public:
 	int32 GetMaxAmmo() const;
 	FVector GetMuzzleLocation() const;
 	WeaponType GetWeaponType() const;
+	int32 GetDamage() const;
 
 	void CreateProjectilePool();
 

@@ -66,6 +66,11 @@ void ASGProjectile::SetControllingPawn(APawn * NewPawn)
 	ControllingPawn = NewPawn;
 }
 
+int32 ASGProjectile::GetDamage() const
+{
+	return Damage;
+}
+
 void ASGProjectile::SetDisableTimer(float DisableTimer)
 {
 	GetWorld()->GetTimerManager().SetTimer(DisableTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {

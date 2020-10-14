@@ -89,6 +89,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystem* MuzzleFlashParticle;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* Image;
 };
 
 USTRUCT()
@@ -102,4 +105,23 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSoftObjectPtr<class UTexture2D> ImagePath;
+};
+
+USTRUCT()
+struct SHOOTINGGAME_API FSGStageData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	int32 Id;
+
+	UPROPERTY(EditDefaultsOnly)
+	FString Name;
+
+	UPROPERTY(EditDefaultsOnly)
+	FString Description;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UTexture2D* Image;
 };
