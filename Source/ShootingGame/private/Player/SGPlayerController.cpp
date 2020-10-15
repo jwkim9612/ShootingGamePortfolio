@@ -40,6 +40,8 @@ void ASGPlayerController::BeginPlay()
 
 	FInputModeGameOnly Mode;
 	SetInputMode(Mode);
+
+	SGHUDWidget->PlayFadeInScreenAnimation();
 }
 
 USGHUDWidget * ASGPlayerController::GetSGHUDWidget() const

@@ -1,6 +1,7 @@
 #include "SGGameInstance.h"
 #include "SGLoadingScreen.h"
 #include "SGFloatingDamageTextPool.h"
+#include "StageService.h"
 #include "SGWeapon.h"
 
 void USGGameInstance::Init()
@@ -14,6 +15,7 @@ void USGGameInstance::Init()
 
 	SGLoadingScreen = CreateWidget<USGLoadingScreen>(this, LoadingScreenClass);
 	LoadingTImer = 2.0f;
+	CurrentStage = 1;
 }
 
 void USGGameInstance::SetSelectedRifleName(FString RifleName)
@@ -34,6 +36,23 @@ FString USGGameInstance::GetSelectedRifleName() const
 FString USGGameInstance::GetSelectedPistolName() const
 {
 	return SelectedPistolName;
+}
+
+int32 USGGameInstance::GetCurrentStage() const
+{
+	return CurrentStage;
+}
+
+void USGGameInstance::IncreaseStage(int32 IncreaseValue)
+{
+	if (IncreaseValue > 0)
+	{
+		CurrentStage = FMath::Clamp(CurrentStage + IncreaseValue, 1, StageService::FinalStage);
+	}
+	else
+	{
+		SGLOG(Warning, TEXT("Value must be greater than zero!!"));
+	}
 }
 
 void USGGameInstance::InitializeParticleDataTable()
@@ -65,15 +84,7 @@ void USGGameInstance::InitializeWeaponDataTable()
 		{
 			ASGWeapon* Weapon = Data->Class->GetDefaultObject<ASGWeapon>();
 			Weapon->SetWeaponData(Data);
-
 			WeaponTable.Emplace(Data->Name, *Data);
-			//AssetLoader.LoadSynchronous(Data->WeaponPath);
-			//UClass* WeaponClass = Cast<UClass>(FSoftClassPath(Data->WeaponPath->GetPathName()).ResolveClass());
-			//WeaponTable.Add(Data->Name, WeaponClass);
-
-// 아래는 다음과 같은 오류가 뜸. SpawnActor failed because BlueprintGeneratedClass is not an actor class
-//auto WeaponSubClass = AssetLoader.LoadSynchronous(Data->WeaponPath);
-//WeaponTable.Add(Data->Name, WeaponSubClass->GetClass());
 		}
 	}
 }
@@ -164,6 +175,12 @@ void USGGameInstance::PlayFloatingDamageText(int32 Damage, FVector Location, boo
 	FloatingDamageTextPool->SetTextAndPlay(Damage, Location, bIsHitHead);
 }
 
+void USGGameInstance::LoadNextStage()
+{
+	IncreaseStage(1);
+	LoadStage(CurrentStage);
+}
+
 void USGGameInstance::LoadStage(int32 StageId)
 {
 	FSGStageData* Data = TryGetStageData(StageId);
@@ -174,5 +191,4 @@ void USGGameInstance::LoadStage(int32 StageId)
 	GetWorld()->GetTimerManager().SetTimer(LoadingTimerHandle, FTimerDelegate::CreateLambda([this, Data]() -> void {
 		UGameplayStatics::OpenLevel(this, FName(*Data->Name));
 	}), LoadingTImer, false);
-
 }

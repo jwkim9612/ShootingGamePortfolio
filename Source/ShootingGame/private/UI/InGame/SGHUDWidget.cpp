@@ -40,6 +40,18 @@ void USGHUDWidget::PlayFadeHitEffectAnimation()
 	SGHitEffect->PlayFadeAnimation();
 }
 
+void USGHUDWidget::PlayFadeInScreenAnimation()
+{
+	SGCHECK(FadeInScreen);
+	PlayAnimation(FadeInScreen);
+}
+
+float USGHUDWidget::PlayFadeOutScreenAnimation()
+{
+	PlayAnimation(FadeOutScreen);
+	return FadeOutScreen->GetEndTime();
+}
+
 void USGHUDWidget::SetControllingPawn(APawn * aPawn)
 {
 	SGPlayer = Cast<ASGPlayer>(aPawn);

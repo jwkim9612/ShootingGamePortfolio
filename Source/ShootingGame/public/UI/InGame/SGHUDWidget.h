@@ -19,6 +19,8 @@ public:
 	void PlayFadeInHPBarAnimation();
 	void PlayFadeOutHPBarAnimation();
 	void PlayFadeHitEffectAnimation();
+	void PlayFadeInScreenAnimation();
+	float PlayFadeOutScreenAnimation();
 
 	void SetControllingPawn(APawn* aPawn);
 
@@ -44,6 +46,12 @@ private:
 
 	UPROPERTY(meta = (BindWidgetAnim))
 	class UWidgetAnimation* FadeOutHPBar;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+	class UWidgetAnimation* FadeInScreen;
+
+	UPROPERTY(meta = (BindWidgetAnim))
+	class UWidgetAnimation* FadeOutScreen;
 
 private:
 	UPROPERTY()

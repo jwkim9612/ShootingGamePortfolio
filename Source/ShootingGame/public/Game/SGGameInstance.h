@@ -23,6 +23,9 @@ public:
 	FString GetSelectedRifleName() const;
 	FString GetSelectedPistolName() const;
 
+	int32 GetCurrentStage() const;
+	void IncreaseStage(int32 IncreaseValue = 1);
+
 private:
 	void InitializeParticleDataTable();
 	void InitializeWeaponDataTable();
@@ -39,6 +42,7 @@ public:
 	struct FSGStageData* TryGetStageData(int32 Id);
 
 	void PlayFloatingDamageText(int32 Damage, FVector Location, bool bIsHitHead = false);
+	void LoadNextStage();
 	void LoadStage(int32 StageId);
 
 public:
@@ -84,6 +88,9 @@ private:
 
 	FTimerHandle LoadingTimerHandle;
 	float LoadingTImer;
+
+private:
+	int32 CurrentStage;
 
 private:
 	FString SelectedRifleName;
